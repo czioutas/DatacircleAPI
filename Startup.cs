@@ -31,6 +31,7 @@ namespace DatacircleAPI
             // Add framework services.
             services.AddMvc();
 
+            // services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:MSSQLAzureConnection"]));
             services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
 
             services.ConfigureSwaggerGen(options =>

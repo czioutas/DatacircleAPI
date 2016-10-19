@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DatacircleAPI.Models
 {
@@ -14,6 +15,8 @@ namespace DatacircleAPI.Models
         public Boolean DatasourceWrite { get; set; }
         public Boolean DashboardRead { get; set; }
         public Boolean DashboardWrite { get; set; }
+        public int ComapnyFk { get; set; }
+        [ForeignKey("ComapnyFk")]
         public Company Company { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
