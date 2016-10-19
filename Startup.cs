@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.Swagger.Model;
+using DatacircleAPI.Database;
+using Pomelo.EntityFrameworkCore.MySql;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace DatacircleAPI
 {
@@ -33,17 +31,19 @@ namespace DatacircleAPI
             // Add framework services.
             services.AddMvc();
 
-            // services.ConfigureSwaggerGen(options =>
-            // {
-            //     options.SingleApiVersion(new Info
-            //     {
-            //         Version = "v1",
-            //         Title = "DataCircle API",
-            //         Description = "A simple example ASP.NET Core Web API",
-            //         TermsOfService = "None",
-            //         Contact = new Contact { Name = "Chris Zioutas", Email = "chriszioutas@datacirlce.io", Url = "http://twitter.com/drakoumel"}
-            //     });
-            // });
+            services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
+
+            services.ConfigureSwaggerGen(options =>
+            {
+                options.SingleApiVersion(new Info
+                {
+                    Version = "v1",
+                    Title = "DataCircle API",
+                    Description = "A simple example ASP.NET Core Web API",
+                    TermsOfService = "None",
+                    Contact = new Contact { Name = "Chris Zioutas", Email = "chriszioutas@datacirlce.io", Url = "http://twitter.com/drakoumel"}
+                });
+            });
 
             services.AddSwaggerGen();
 
@@ -56,7 +56,6 @@ namespace DatacircleAPI
             loggerFactory.AddDebug();
 
             app.UseMvc();
-
             app.UseSwagger();
             app.UseSwaggerUi();
         }
