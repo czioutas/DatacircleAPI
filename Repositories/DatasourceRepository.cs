@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using DatacircleAPI.Database;
 using DatacircleAPI.Models;
+using DatacircleAPI.ViewModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace DatacircleAPI.Repositories
 {
@@ -37,10 +39,22 @@ namespace DatacircleAPI.Repositories
             return this._context.Datasource.SingleOrDefault(ds => ds.ID == datasourceId);
         }
 
-        void IDatasourceRepository.Update(Datasource datasource)
-        {
-            datasource.UpdatedAt = DateTime.Now;
-            this._context.Datasource.Update(datasource);
+        void IDatasourceRepository.Update(DatasourceViewModel datasourceVm)
+        {            
+            var _datasource = this._context.Datasource
+            .Include(dc => dc.ConnectionDetails)
+            .Where(dc => dc.ID == datasourceVm.datasource.ID).FirstOrDefault<Datasource>();
+
+            _datasource.Title = datasourceVm.datasource.Title != null ? datasourceVm.datasource.Title : _datasource.Title;                        
+            _datasource.UpdatedAt = DateTime.Now;
+
+            _datasource.ConnectionDetails.UpdatedAt = _datasource.UpdatedAt;
+
+            if (datasourceVm.connectionDetails.Host != null) {
+                _datasource.ConnectionDetails.Host =  datasourceVm.connectionDetails.Host;
+            }
+             
+            this._context.Datasource.Update(_datasource);
         }
 
         int IDatasourceRepository.Save()

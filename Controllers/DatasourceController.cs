@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using DatacircleAPI.Models;
 using Microsoft.Extensions.Logging;
-using DatacircleAPI.Database;
+using DatacircleAPI.Models;
 using DatacircleAPI.ViewModel;
-using DatacircleAPI.Repositories;
+using DatacircleAPI.Services;
+
 
 namespace DatacircleAPI.Controllers
 {
@@ -16,24 +11,21 @@ namespace DatacircleAPI.Controllers
     [Route("api/[controller]")]
     public class DatasourceController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IDatasourceRepository _datasourceRepository;
-        private readonly IConnectionDetailsRepository _connectionRepository;
         private readonly ILogger _logger;
 
-        public DatasourceController(IDatasourceRepository datasourceRepository, IConnectionDetailsRepository connectionRepository, ApplicationDbContext context, ILogger<DatasourceController> logger)
-        {
-            this._connectionRepository = connectionRepository;
-            this._datasourceRepository = datasourceRepository;
-            this._context = context;
+        private readonly DatasourceService _datasourceService;
+
+        public DatasourceController(ILogger<DatasourceController> logger, DatasourceService datasourceService)
+        {            
             this._logger = logger;
+            this._datasourceService = datasourceService;
         }
 
         // GET api/datasource
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            Datasource datasource = this._datasourceRepository.Get(id);
+            Datasource datasource = this._datasourceService.Get(id);
          
             if (datasource == null)
             {
@@ -47,21 +39,25 @@ namespace DatacircleAPI.Controllers
         [HttpPost]
         public IActionResult Create(DatasourceViewModel datasourceViewModel)
         {            
-            ConnectionDetails connectionDetails = this._connectionRepository.Create(datasourceViewModel.connectionDetails);
-            datasourceViewModel.datasource.ConnectionDetailsFk = connectionDetails.ID;
-            
-            this._datasourceRepository.Create(datasourceViewModel.datasource);            
-            this._context.SaveChanges();
+            this._datasourceService.Create(datasourceViewModel.datasource, datasourceViewModel.connectionDetails);
 
             return this.Ok();
         }
 
         // PUT api/datasource/5
         [HttpPut("{id}")]
-        public IActionResult Put(Datasource datasource)
+        public IActionResult Put(int id, DatasourceViewModel datasourceVm)
         {
-            this._datasourceRepository.Update(datasource);
-            this._datasourceRepository.Save();
+            if (id != datasourceVm.datasource.ID) 
+            {
+                return this.NotFound();
+            }
+
+            if (id == 0 || datasourceVm.datasource.ID == 0) {
+                return this.BadRequest();
+            }
+
+            this._datasourceService.Update(datasourceVm);
 
             return this.Ok();        
         }
@@ -70,8 +66,7 @@ namespace DatacircleAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {            
-            this._datasourceRepository.Delete(id);
-            this._datasourceRepository.Save();
+            this._datasourceService.Delete(id);
 
             return this.Ok();
         }

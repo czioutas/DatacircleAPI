@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Swashbuckle.Swagger.Model;
 using DatacircleAPI.Database;
 using DatacircleAPI.Repositories;
+using DatacircleAPI.Services;
 using Pomelo.EntityFrameworkCore.MySql;
 using Microsoft.AspNetCore.Diagnostics;
 
@@ -47,8 +48,13 @@ namespace DatacircleAPI
                 });
             });
 
+            // AddScoped -> most performant
+            // AddTransient -> better for async
+            // AddSingleton -> self explanatory
             services.AddScoped<IDatasourceRepository, DatasourceRepository>();
             services.AddScoped<IConnectionDetailsRepository, ConnectionDetailsRepository>();
+
+            services.AddScoped<DatasourceService, DatasourceService>();
 
             services.AddSwaggerGen();
 
