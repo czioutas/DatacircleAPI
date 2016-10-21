@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.Swagger.Model;
 using DatacircleAPI.Database;
+using DatacircleAPI.Repositories;
 using Pomelo.EntityFrameworkCore.MySql;
 using Microsoft.AspNetCore.Diagnostics;
 
@@ -45,6 +46,9 @@ namespace DatacircleAPI
                     Contact = new Contact { Name = "Chris Zioutas", Email = "chriszioutas@datacirlce.io", Url = "http://twitter.com/drakoumel"}
                 });
             });
+
+            services.AddScoped<IDatasourceRepository, DatasourceRepository>();
+            services.AddScoped<IConnectionDetailsRepository, ConnectionDetailsRepository>();
 
             services.AddSwaggerGen();
 

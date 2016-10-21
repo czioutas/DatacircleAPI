@@ -8,14 +8,13 @@ using DatacircleAPI.Database;
 namespace DatacircleAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20161019213954_fresh1")]
-    partial class fresh1
+    [Migration("20161021125619_fresh")]
+    partial class fresh
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.0.1")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "1.0.1");
 
             modelBuilder.Entity("DatacircleAPI.Models.Address", b =>
                 {

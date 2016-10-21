@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace DatacircleAPI.Migrations
 {
-    public partial class fresh1 : Migration
+    public partial class fresh : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +13,7 @@ namespace DatacircleAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
                     City = table.Column<string>(type: "varchar(100)", nullable: true),
                     Country = table.Column<string>(type: "varchar(100)", nullable: true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
@@ -34,7 +33,7 @@ namespace DatacircleAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(type: "varchar(100)", nullable: true),
                     Name = table.Column<string>(type: "varchar(100)", nullable: true),
@@ -50,7 +49,7 @@ namespace DatacircleAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
                     ConnectionString = table.Column<string>(type: "varchar(250)", nullable: true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Database = table.Column<string>(type: "varchar(250)", nullable: true),
@@ -70,7 +69,7 @@ namespace DatacircleAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Email = table.Column<string>(type: "varchar(100)", nullable: true),
                     UpdatedAt = table.Column<DateTime>(nullable: false)
@@ -99,7 +98,7 @@ namespace DatacircleAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
                     Admin = table.Column<bool>(nullable: false),
                     ComapnyFk = table.Column<int>(nullable: false),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
@@ -132,7 +131,7 @@ namespace DatacircleAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
                     ConnectionDetailsFk = table.Column<int>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(type: "varchar(100)", nullable: true),
@@ -156,7 +155,7 @@ namespace DatacircleAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     AddressFk = table.Column<int>(nullable: false),
                     ComapnyFk = table.Column<int>(nullable: false),
@@ -214,7 +213,7 @@ namespace DatacircleAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true),
                     RoleId = table.Column<int>(nullable: false)
@@ -235,7 +234,7 @@ namespace DatacircleAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
                     ChartType = table.Column<int>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     DatasourceFk = table.Column<int>(nullable: false),
@@ -260,7 +259,7 @@ namespace DatacircleAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true),
                     UserId = table.Column<int>(nullable: false)

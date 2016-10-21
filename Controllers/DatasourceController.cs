@@ -8,6 +8,7 @@ using DatacircleAPI.Models;
 using Microsoft.Extensions.Logging;
 using DatacircleAPI.Database;
 using DatacircleAPI.ViewModel;
+using DatacircleAPI.Repositories;
 
 namespace DatacircleAPI.Controllers
 {
@@ -16,24 +17,23 @@ namespace DatacircleAPI.Controllers
     public class DatasourceController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger logger;
+        private readonly IDatasourceRepository _datasourceRepository;
+        private readonly IConnectionDetailsRepository _connectionRepository;
+        private readonly ILogger _logger;
 
-        public DatasourceController(ApplicationDbContext context, ILogger<DatasourceController> logger)
+        public DatasourceController(IDatasourceRepository datasourceRepository, IConnectionDetailsRepository connectionRepository, ApplicationDbContext context, ILogger<DatasourceController> logger)
         {
+            this._connectionRepository = connectionRepository;
+            this._datasourceRepository = datasourceRepository;
             this._context = context;
-            this.logger = logger;
+            this._logger = logger;
         }
 
         // GET api/datasource
         [HttpGet("{id}")]
-        public IActionResult Get(int? id)
+        public IActionResult Get(int id)
         {
-            if (id == null)
-            {
-                return this.BadRequest();                
-            }
-               
-            Datasource datasource = this._context.Datasource.SingleOrDefault(ds => ds.ID == id);
+            Datasource datasource = this._datasourceRepository.Get(id);
          
             if (datasource == null)
             {
@@ -47,17 +47,10 @@ namespace DatacircleAPI.Controllers
         [HttpPost]
         public IActionResult Create(DatasourceViewModel datasourceViewModel)
         {            
-            DateTime now = DateTime.Now;
-
-            datasourceViewModel.datasource.CreatedAt = now;
-            datasourceViewModel.datasource.UpdatedAt = now;
-            datasourceViewModel.connectionDetails.CreatedAt = now;
-            datasourceViewModel.connectionDetails.UpdatedAt = now;
-
-            var connectionDetailsEntity = this._context.ConnectionDetails.Add(datasourceViewModel.connectionDetails);
-            datasourceViewModel.datasource.ConnectionDetailsFk = connectionDetailsEntity.Entity.ID;
+            ConnectionDetails connectionDetails = this._connectionRepository.Create(datasourceViewModel.connectionDetails);
+            datasourceViewModel.datasource.ConnectionDetailsFk = connectionDetails.ID;
             
-            this._context.Datasource.Add(datasourceViewModel.datasource);
+            this._datasourceRepository.Create(datasourceViewModel.datasource);            
             this._context.SaveChanges();
 
             return this.Ok();
@@ -65,26 +58,22 @@ namespace DatacircleAPI.Controllers
 
         // PUT api/datasource/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Datasource datasource)
+        public IActionResult Put(Datasource datasource)
         {
-            if (id == null || datasource.ID != id)
-            {
-                return this.BadRequest();                
-            }
-            
-            if (this._context.Datasource.Single(ds => ds.ID == id) == null)
-            {
-                return this.NotFound();
-            }
+            this._datasourceRepository.Update(datasource);
+            this._datasourceRepository.Save();
 
-            this._context.Datasource.Update(datasource);
-            return new NoContentResult();        
+            return this.Ok();        
         }
 
         // DELETE api/datasource/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+        public IActionResult Delete(int id)
+        {            
+            this._datasourceRepository.Delete(id);
+            this._datasourceRepository.Save();
+
+            return this.Ok();
         }
     }
 }
