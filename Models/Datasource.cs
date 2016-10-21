@@ -26,11 +26,6 @@ namespace DatacircleAPI.Models
         public ConnectionDetails ConnectionDetails { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-
-        public void addMore()
-        {
-            
-        }
     }
 
 

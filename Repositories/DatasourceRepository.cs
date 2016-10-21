@@ -28,7 +28,7 @@ namespace DatacircleAPI.Repositories
 
         void IDatasourceRepository.Delete(int datasourceId)
         {
-            var datasource = this._context.Datasource.SingleOrDefault(ds => ds.ID == datasourceId);
+            var datasource = this._context.Datasource.FirstOrDefault(ds => ds.ID == datasourceId);
             if (datasource != null) {
                 this._context.Remove(datasource);
             }
@@ -36,14 +36,16 @@ namespace DatacircleAPI.Repositories
 
         Datasource IDatasourceRepository.Get(int datasourceId)
         {
-            return this._context.Datasource.SingleOrDefault(ds => ds.ID == datasourceId);
+            return this._context.Datasource
+                        .Include(ds => ds.ConnectionDetails)
+                        .FirstOrDefault(ds => ds.ID == datasourceId);
         }
 
         void IDatasourceRepository.Update(DatasourceViewModel datasourceVm)
         {            
             var _datasource = this._context.Datasource
-            .Include(dc => dc.ConnectionDetails)
-            .Where(dc => dc.ID == datasourceVm.datasource.ID).FirstOrDefault<Datasource>();
+            .Include(ds => ds.ConnectionDetails)
+            .Where(ds => ds.ID == datasourceVm.datasource.ID).FirstOrDefault<Datasource>();
 
             _datasource.Title = datasourceVm.datasource.Title != null ? datasourceVm.datasource.Title : _datasource.Title;                        
             _datasource.UpdatedAt = DateTime.Now;

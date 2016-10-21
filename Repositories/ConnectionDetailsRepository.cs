@@ -26,7 +26,7 @@ namespace DatacircleAPI.Repositories
 
         void IConnectionDetailsRepository.Delete(int connectionDetailsId)
         {
-            var connectionDetails = this._context.ConnectionDetails.SingleOrDefault(cd => cd.ID == connectionDetailsId);
+            var connectionDetails = this._context.ConnectionDetails.FirstOrDefault(cd => cd.ID == connectionDetailsId);
             if (connectionDetails != null) {
                 this._context.ConnectionDetails.Remove(connectionDetails);
             }        
@@ -34,7 +34,7 @@ namespace DatacircleAPI.Repositories
 
         ConnectionDetails IConnectionDetailsRepository.Get(int connectionDetailsId)
         {
-            return this._context.ConnectionDetails.SingleOrDefault(ds => ds.ID == connectionDetailsId);
+            return this._context.ConnectionDetails.FirstOrDefault(ds => ds.ID == connectionDetailsId);
         }
 
         int IConnectionDetailsRepository.Save()
