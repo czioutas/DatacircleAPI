@@ -1,0 +1,22 @@
+{
+  "EmailSettings": {
+    "ApiKey": "api:key-*",
+    "BaseUri": "https://api.mailgun.net/v3/",
+    "RequestUri": "sandbox*.mailgun.org/messages",
+    "From": "postmaster@sandbox*.mailgun.org"
+  },
+  "MailTemplateSettings": {
+    "AccountRegistration": {        
+        "Subject": "DataCircle, Welcome to the family!",
+        "Content": "Thank you for registering"
+      },
+      "AccountVerification": {
+        "Subject": "DataCircle, Please confirm you email address.",
+        "Content": " <a href=\"$url/verify/$userVericifationKey\"> click me </a>"
+      },
+      "Invitation": {
+        "Subject": "DataCircle, You have been invited!",
+        "Content": "<a href=\"$url?registerHash=$userHash&company=$company#register\"> click me </a>"
+      }
+  }
+}

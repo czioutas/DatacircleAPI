@@ -8,8 +8,9 @@ using Swashbuckle.Swagger.Model;
 using DatacircleAPI.Database;
 using DatacircleAPI.Repositories;
 using DatacircleAPI.Services;
-using Pomelo.EntityFrameworkCore.MySql;
-using Microsoft.AspNetCore.Diagnostics;
+// using Pomelo.EntityFrameworkCore.MySql;
+using DatacircleAPI.Models;
+using DatacircleAPI.Settings;
 
 namespace DatacircleAPI
 {
@@ -21,6 +22,8 @@ namespace DatacircleAPI
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile("config.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"config.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
         }
@@ -48,6 +51,11 @@ namespace DatacircleAPI
                 });
             });
 
+            // Settings files should come first.
+            // Most services are going to depend on the Settings files being there.
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+            services.Configure<MailTemplateSettings>(Configuration.GetSection("MailTemplateSettings"));
+
             // AddScoped -> most performant
             // AddTransient -> better for async
             // AddSingleton -> self explanatory
@@ -55,7 +63,10 @@ namespace DatacircleAPI
             services.AddScoped<IConnectionDetailsRepository, ConnectionDetailsRepository>();
 
             services.AddScoped<DatasourceService, DatasourceService>();
+            services.AddScoped<MailTemplateService, MailTemplateService>();
+            services.AddScoped<IEmailSender, AuthMessageSender>();
 
+            services.AddOptions();
             services.AddSwaggerGen();
 
         }
