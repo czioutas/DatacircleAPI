@@ -40,8 +40,9 @@ namespace DatacircleAPI.Services
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
                     Convert.ToBase64String(Encoding.ASCII.GetBytes(this._emailSettings.ApiKey)));
-        
+
                 email.Message = this._mailTemplateService.PrepareContent(email);
+                email.Subject = this._mailTemplateService.PrepareSubject(email);
 
                 var content = new FormUrlEncodedContent(new[]
                 {
@@ -51,7 +52,7 @@ namespace DatacircleAPI.Services
                     new KeyValuePair<string, string>("text", email.Message)
                 });
 
-                await client.PostAsync(this._emailSettings.RequestUri, content).ConfigureAwait(false);
+                await client.PostAsync(this._emailSettings.RequestUri, content).ConfigureAwait(false);                
             }
         }
 

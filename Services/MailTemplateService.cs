@@ -22,5 +22,14 @@ namespace DatacircleAPI.Services
             
             return bst.Content;
         }
+
+        public string PrepareSubject(Email email)
+        {
+            string EmailTemplate = email.Template;
+            
+            BaseMailTemplate bst = (BaseMailTemplate) this._mailTemplateSettings.Value.GetTemplateByName(EmailTemplate);
+            
+            return bst.Subject;
+        }
     }
 }

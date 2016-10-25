@@ -18,12 +18,14 @@ namespace DatacircleAPI.Database {
 
         protected override void OnModelCreating(ModelBuilder builder) {
             base.OnModelCreating(builder);
+            builder.Entity<Role>(entity => entity.ToTable("Roles"));
             builder.Entity<User>(entity => entity.ToTable("Users"));
+
+            builder.Entity<User>().Ignore(c => c.UserName);
+
             builder.Entity<IdentityUserClaim<int>>(entity => entity.ToTable("UserClaims"));
             builder.Entity<IdentityUserLogin<int>>(entity => entity.ToTable("UserLogins"));
-            builder.Entity<IdentityUserRole<int>>(entity => entity.ToTable("UserRoles"));
-            builder.Entity<IdentityUserToken<int>>(entity => entity.ToTable("UserTokens"));
-            builder.Entity<Role>(entity => entity.ToTable("Roles"));
+            builder.Entity<IdentityUserToken<int>>(entity => entity.ToTable("UserTokens"));            
             builder.Entity<IdentityRoleClaim<int>>(entity => entity.ToTable("RoleClaims"));
 
             foreach (var relationship in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

@@ -5,12 +5,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.Swagger.Model;
+using Pomelo.EntityFrameworkCore.MySql;
+using DatacircleAPI.Settings;
+using System.Text;
 using DatacircleAPI.Database;
 using DatacircleAPI.Repositories;
 using DatacircleAPI.Services;
-// using Pomelo.EntityFrameworkCore.MySql;
 using DatacircleAPI.Models;
-using DatacircleAPI.Settings;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace DatacircleAPI
 {
@@ -30,14 +33,10 @@ namespace DatacircleAPI
 
         public IConfigurationRoot Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
-            services.AddMvc();
-
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:MSSQLAzureConnection"]));
-            // services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
+            // services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:MSSQLAzureConnection"]));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(Configuration["ConnectionStrings:DefaultConnection"]));
 
             services.ConfigureSwaggerGen(options =>
             {
@@ -51,6 +50,12 @@ namespace DatacircleAPI
                 });
             });
 
+            services.AddIdentity<User, Role>()
+                .AddEntityFrameworkStores<ApplicationDbContext,int>();
+                //.AddDefaultTokenProviders();
+
+            services.AddMvc();
+
             // Settings files should come first.
             // Most services are going to depend on the Settings files being there.
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
@@ -61,8 +66,11 @@ namespace DatacircleAPI
             // AddSingleton -> self explanatory
             services.AddScoped<IDatasourceRepository, DatasourceRepository>();
             services.AddScoped<IConnectionDetailsRepository, ConnectionDetailsRepository>();
+            services.AddScoped<ICompanyRepository, CompanyRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
 
             services.AddScoped<DatasourceService, DatasourceService>();
+            services.AddScoped<AccountService, AccountService>();            
             services.AddScoped<MailTemplateService, MailTemplateService>();
             services.AddScoped<IEmailSender, AuthMessageSender>();
 
@@ -71,13 +79,40 @@ namespace DatacircleAPI
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            
+            // Add JWT generation endpoint:
+            var secretKey = "mysupersecret_secretkey!123";
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+            var options = new TokenProviderOptions
+            {
+                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
+            };
 
-            app.UseMvc();
+            // JwtTokenAuthetication on [Authorized] Requests            
+            app.UseJwtBearerAuthentication(new JwtBearerOptions
+            {
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true,
+                TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = signingKey,            
+                    ValidateLifetime = true
+                }
+            });
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "DefaultApi",
+                    template: "api/{controller}/{action}/{id}");
+            });
+
+
             app.UseSwagger();
             app.UseSwaggerUi();
         }

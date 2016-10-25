@@ -9,26 +9,6 @@ namespace DatacircleAPI.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Addresses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
-                    City = table.Column<string>(type: "varchar(100)", nullable: true),
-                    Country = table.Column<string>(type: "varchar(100)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    PostCode = table.Column<string>(type: "varchar(50)", nullable: true),
-                    Salutation = table.Column<int>(nullable: false),
-                    Street = table.Column<string>(type: "varchar(100)", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(nullable: false),
-                    phone = table.Column<string>(type: "varchar(100)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Addresses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Company",
                 columns: table => new
                 {
@@ -135,7 +115,7 @@ namespace DatacircleAPI.Migrations
                     ConnectionDetailsFk = table.Column<int>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(type: "varchar(100)", nullable: true),
-                    Title = table.Column<string>(type: "varchar(100)", nullable: false),
+                    Title = table.Column<string>(type: "varchar(100)", maxLength: 50, nullable: false),
                     Type = table.Column<int>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
@@ -157,9 +137,7 @@ namespace DatacircleAPI.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGeneratedOnAdd", true),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    AddressFk = table.Column<int>(nullable: false),
-                    ComapnyFk = table.Column<int>(nullable: false),
-                    CompanyFk = table.Column<int>(nullable: true),
+                    CompanyFk = table.Column<int>(nullable: false),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
@@ -188,12 +166,6 @@ namespace DatacircleAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_Addresses_AddressFk",
-                        column: x => x.AddressFk,
-                        principalTable: "Addresses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AspNetUsers_Company_CompanyFk",
                         column: x => x.CompanyFk,
@@ -250,6 +222,33 @@ namespace DatacircleAPI.Migrations
                         name: "FK_Metric_Datasource_DatasourceFk",
                         column: x => x.DatasourceFk,
                         principalTable: "Datasource",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Addresses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    City = table.Column<string>(type: "varchar(100)", nullable: true),
+                    Country = table.Column<string>(type: "varchar(100)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    PostCode = table.Column<string>(type: "varchar(50)", nullable: true),
+                    Salutation = table.Column<int>(nullable: false),
+                    Street = table.Column<string>(type: "varchar(100)", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
+                    UserFk = table.Column<int>(nullable: false),
+                    phone = table.Column<string>(type: "varchar(100)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Addresses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Addresses_AspNetUsers_UserFk",
+                        column: x => x.UserFk,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -320,6 +319,11 @@ namespace DatacircleAPI.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Addresses_UserFk",
+                table: "Addresses",
+                column: "UserFk");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Datasource_ConnectionDetailsFk",
                 table: "Datasource",
                 column: "ConnectionDetailsFk");
@@ -340,11 +344,6 @@ namespace DatacircleAPI.Migrations
                 column: "NormalizedName");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_AddressFk",
-                table: "AspNetUsers",
-                column: "AddressFk");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_CompanyFk",
                 table: "AspNetUsers",
                 column: "CompanyFk");
@@ -357,7 +356,8 @@ namespace DatacircleAPI.Migrations
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
-                column: "NormalizedUserName");
+                column: "NormalizedUserName",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_RoleFk",
@@ -393,6 +393,9 @@ namespace DatacircleAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Addresses");
+
+            migrationBuilder.DropTable(
                 name: "Metric");
 
             migrationBuilder.DropTable(
@@ -421,9 +424,6 @@ namespace DatacircleAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "ConnectionDetails");
-
-            migrationBuilder.DropTable(
-                name: "Addresses");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

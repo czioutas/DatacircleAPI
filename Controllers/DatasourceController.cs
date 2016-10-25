@@ -40,7 +40,7 @@ namespace DatacircleAPI.Controllers
         public IActionResult Create(DatasourceViewModel datasourceViewModel)
         {            
             this._datasourceService.Create(datasourceViewModel.datasource, datasourceViewModel.connectionDetails);
-
+                
             return this.Ok();
         }
 

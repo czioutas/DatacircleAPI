@@ -39,10 +39,14 @@ namespace DatacircleAPI.Migrations
 
                     b.Property<DateTime>("UpdatedAt");
 
+                    b.Property<int>("UserFk");
+
                     b.Property<string>("phone")
                         .HasColumnType("varchar(100)");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("UserFk");
 
                     b.ToTable("Addresses");
                 });
@@ -115,7 +119,8 @@ namespace DatacircleAPI.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(100)")
+                        .HasAnnotation("MaxLength", 50);
 
                     b.Property<int>("Type");
 
@@ -228,11 +233,7 @@ namespace DatacircleAPI.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
-                    b.Property<int>("AddressFk");
-
-                    b.Property<int>("ComapnyFk");
-
-                    b.Property<int?>("CompanyFk");
+                    b.Property<int>("CompanyFk");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -294,14 +295,13 @@ namespace DatacircleAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressFk");
-
                     b.HasIndex("CompanyFk");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
+                        .IsUnique()
                         .HasName("UserNameIndex");
 
                     b.HasIndex("RoleFk");
@@ -392,6 +392,13 @@ namespace DatacircleAPI.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("DatacircleAPI.Models.Address", b =>
+                {
+                    b.HasOne("DatacircleAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserFk");
+                });
+
             modelBuilder.Entity("DatacircleAPI.Models.Datasource", b =>
                 {
                     b.HasOne("DatacircleAPI.Models.ConnectionDetails", "ConnectionDetails")
@@ -415,10 +422,6 @@ namespace DatacircleAPI.Migrations
 
             modelBuilder.Entity("DatacircleAPI.Models.User", b =>
                 {
-                    b.HasOne("DatacircleAPI.Models.Address", "Address")
-                        .WithMany()
-                        .HasForeignKey("AddressFk");
-
                     b.HasOne("DatacircleAPI.Models.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyFk");

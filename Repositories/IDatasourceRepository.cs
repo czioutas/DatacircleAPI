@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using DatacircleAPI.Models;
 using DatacircleAPI.ViewModel;
 
