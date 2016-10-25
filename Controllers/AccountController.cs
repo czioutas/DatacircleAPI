@@ -17,8 +17,11 @@ namespace DatacircleAPI.Controllers
     public class AccountController : Controller
     {
         private readonly AccountService _accountService;
-        public AccountController(AccountService accountService)
+        private readonly SignInManager<User> _signInManager;
+
+        public AccountController(AccountService accountService, SignInManager<User> signInManager)
         {
+            _signInManager = signInManager;
             _accountService = accountService;
         }
 
@@ -26,22 +29,21 @@ namespace DatacircleAPI.Controllers
         // // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel loginVm)
         {
-            // var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: true);
-            // if (result.Succeeded)
-            // {
-            //     // generate and send Token
-            //     return this.Ok();                    
-            // }
+            var result = await _signInManager.PasswordSignInAsync(loginVm.Email, loginVm.Password, loginVm.RememberMe, lockoutOnFailure: true);
+            
+            if (!result.Succeeded)
+            {
+                throw new ResponseException("A combination of those credentials did not match.");                 
+            }
                 
-            // if (result.IsLockedOut)
-            // {
-            //     return this.StatusCode(429);                    
-            // }
+            if (result.IsLockedOut)
+            {
+                return this.StatusCode(429);                    
+            }
 
-            return this.BadRequest("Credentials do not match.");                    
+            return this.Ok();                    
         }
 
         //

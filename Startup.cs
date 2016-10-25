@@ -105,13 +105,13 @@ namespace DatacircleAPI
                 }
             });
 
+            app.UseIdentity(); 
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "DefaultApi",
                     template: "api/{controller}/{action}/{id}");
             });
-
 
             app.UseSwagger();
             app.UseSwaggerUi();

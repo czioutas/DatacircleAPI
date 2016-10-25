@@ -52,6 +52,10 @@ namespace DatacircleAPI.Services
                 newRoleEntity.Id
             );            
 
+            Console.WriteLine(newUser.Email);
+            Console.WriteLine(registerVm.Password);
+            Console.WriteLine("-------------------");
+
             IdentityResult result = await _userManager.CreateAsync(newUser, registerVm.Password);
             if (result.Succeeded) {
                 _companyRepository.Save();
