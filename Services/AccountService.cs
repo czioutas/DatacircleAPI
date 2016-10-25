@@ -66,30 +66,6 @@ namespace DatacircleAPI.Services
                 }
                 throw new ResponseException(message);
             }
-
-            //var user = new User { UserName = model.Email, Email = model.Email };
-
-            // // check if company exists
-            // // create company
-            // // create user
-            // return this.Ok(model);
-
-            // var result = await _userManager.CreateAsync(user, model.Password);
-            // if (result.Succeeded)
-            // {
-
-            //         // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
-            //         // Send an email with this link
-            //         //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            //         //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-            //         //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-            //         //    $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
-            //     await _signInManager.SignInAsync(user, isPersistent: false);
-                
-                
-            //     return this.Ok();
-            // } 
-            
         }
 
         private User getDefaultNewUser(RegisterViewModel vm, int CompanyFk, int RoleFk)
