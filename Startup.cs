@@ -14,6 +14,8 @@ using DatacircleAPI.Services;
 using DatacircleAPI.Models;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace DatacircleAPI
 {
@@ -90,6 +92,14 @@ namespace DatacircleAPI
             services.AddScoped<IEmailSender, AuthMessageSender>();
 
             services.AddOptions();
+
+            services.AddAuthorization(auth =>
+            {
+                auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​)
+                    .RequireAuthenticatedUser().Build());
+            });
+
             services.AddSwaggerGen();
 
         }
@@ -104,8 +114,13 @@ namespace DatacircleAPI
             {
                 AutomaticAuthenticate = true,
                 AutomaticChallenge = true,
+                RequireHttpsMetadata = false,
                 TokenValidationParameters = new TokenValidationParameters
                 {
+                    ValidateIssuer = true,
+                    ValidIssuer = "ExampleIssuer",
+                    ValidateAudience = true,
+                    ValidAudience = "ExampleAudience",
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = this._signingKey,            
                     ValidateLifetime = true

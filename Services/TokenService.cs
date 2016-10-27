@@ -35,7 +35,7 @@ namespace DatacircleAPI.Services
 
             // Specifically add the jti (random nonce), iat (issued timestamp), and sub (subject/user) claims.
             // You can add other claims here, if you want:
-            Claim usernameClaim = new Claim(JwtRegisteredClaimNames.Sub, username + uniqueId + IP.ToString());
+            Claim usernameClaim = new Claim(JwtRegisteredClaimNames.Sub, username);
             Claim jtiClaim = new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString());
             Claim iatClaim = new Claim(JwtRegisteredClaimNames.Iat, nowDto.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64);
             var claims = new Claim[]

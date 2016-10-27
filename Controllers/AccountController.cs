@@ -26,11 +26,12 @@ namespace DatacircleAPI.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Policy = "Bearer")]
         public async Task<IActionResult> GetUser()
         {
-            User user = await _userManager.GetUserAsync(HttpContext.User);
-            return this.Ok(user);
+            Console.WriteLine(HttpContext.User.ToString());
+            // User user = await _userManager.GetUserAsync(HttpContext.User);
+            return this.Ok("hello");
         }
 
         // //

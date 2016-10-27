@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DatacircleAPI.Models;
 using DatacircleAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,7 @@ namespace DatacircleAPI.Controllers
         //
         // GET: /<controller>/
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetActionToken()
         {
             User user = await _userManager.GetUserAsync(HttpContext.User);
