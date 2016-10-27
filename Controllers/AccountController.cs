@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using DatacircleAPI.Application;
 using DatacircleAPI.Models;
@@ -9,7 +7,6 @@ using DatacircleAPI.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace DatacircleAPI.Controllers
 {   
@@ -19,10 +16,21 @@ namespace DatacircleAPI.Controllers
         private readonly AccountService _accountService;
         private readonly SignInManager<User> _signInManager;
 
-        public AccountController(AccountService accountService, SignInManager<User> signInManager)
+        private readonly UserManager<User> _userManager;
+
+        public AccountController(AccountService accountService, SignInManager<User> signInManager, UserManager<User> userManager)
         {
             _signInManager = signInManager;
             _accountService = accountService;
+            _userManager = userManager;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUser()
+        {
+            User user = await _userManager.GetUserAsync(HttpContext.User);
+            return this.Ok(user);
         }
 
         // //
@@ -31,19 +39,23 @@ namespace DatacircleAPI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel loginVm)
         {
-            var result = await _signInManager.PasswordSignInAsync(loginVm.Email, loginVm.Password, loginVm.RememberMe, lockoutOnFailure: true);
-            
-            if (!result.Succeeded)
-            {
-                throw new ResponseException("A combination of those credentials did not match.");                 
-            }
+            if(ModelState.IsValid) {
+                var result = await _signInManager.PasswordSignInAsync(loginVm.Email, loginVm.Password, loginVm.RememberMe, lockoutOnFailure: true);
                 
-            if (result.IsLockedOut)
-            {
-                return this.StatusCode(429);                    
-            }
+                if (!result.Succeeded)
+                {
+                    throw new ResponseException("A combination of those credentials did not match.");                 
+                }
+                    
+                if (result.IsLockedOut)
+                {
+                    return this.StatusCode(429);                    
+                }
 
-            return this.Ok();                    
+                return this.Ok();
+            }
+            
+            return this.BadRequest();
         }
 
         //
@@ -59,6 +71,16 @@ namespace DatacircleAPI.Controllers
                 return this.BadRequest(exception.Message);
             }
             
+            return this.Ok();
+        }
+
+        //
+        // GET: /Account/Logout
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
             return this.Ok();
         }
     }

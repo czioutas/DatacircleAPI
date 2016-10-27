@@ -19,6 +19,9 @@ namespace DatacircleAPI
 {
     public class Startup
     {
+        public readonly SymmetricSecurityKey _signingKey;
+        public readonly SigningCredentials _sc;
+        
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -28,7 +31,12 @@ namespace DatacircleAPI
                 .AddJsonFile("config.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"config.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
-            Configuration = builder.Build();
+
+            Configuration = builder.Build(); 
+
+            var secretKey = "mysupersecret_secretkey!123";
+            this._signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));            
+            this._sc = new SigningCredentials(_signingKey, SecurityAlgorithms.HmacSha256);       
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -69,9 +77,16 @@ namespace DatacircleAPI
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
 
-            services.AddScoped<DatasourceService, DatasourceService>();
-            services.AddScoped<AccountService, AccountService>();            
-            services.AddScoped<MailTemplateService, MailTemplateService>();
+            // instanciate TokenService with specific TokenProviderOptions            
+            TokenProviderOptions _tpo = new TokenProviderOptions { SigningCredentials = this._sc };
+
+            //services.
+            services.AddSingleton<TokenProviderOptions>(_tpo);
+            services.AddScoped<TokenService>();
+            services.AddScoped<DatasourceService>();
+            services.AddScoped<AccountService>();
+            services.AddScoped<TokenService>();            
+            services.AddScoped<MailTemplateService>();
             services.AddScoped<IEmailSender, AuthMessageSender>();
 
             services.AddOptions();
@@ -83,15 +98,7 @@ namespace DatacircleAPI
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-            
-            // Add JWT generation endpoint:
-            var secretKey = "mysupersecret_secretkey!123";
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
-            var options = new TokenProviderOptions
-            {
-                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
-            };
-
+                        
             // JwtTokenAuthetication on [Authorized] Requests            
             app.UseJwtBearerAuthentication(new JwtBearerOptions
             {
@@ -100,7 +107,7 @@ namespace DatacircleAPI
                 TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = signingKey,            
+                    IssuerSigningKey = this._signingKey,            
                     ValidateLifetime = true
                 }
             });

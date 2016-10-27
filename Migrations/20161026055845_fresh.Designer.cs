@@ -8,7 +8,7 @@ using DatacircleAPI.Database;
 namespace DatacircleAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20161025150253_fresh")]
+    [Migration("20161026055845_fresh")]
     partial class fresh
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
