@@ -26,7 +26,7 @@ namespace DatacircleAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "Bearer")]
+        [Authorize(ActiveAuthenticationSchemes = "Bearer, Identity.Application")]
         public async Task<IActionResult> GetUser()
         {
             Console.WriteLine(HttpContext.User.ToString());
