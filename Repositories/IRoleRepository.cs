@@ -7,9 +7,9 @@ namespace DatacircleAPI.Repositories
     {
         Role Create(Role role);
         Role Get(int roleId);
-        void Update(Role role);
-        void Delete(int roleId);
-        int Save();
         Role getDefaultNewRole();
+        void Update(Company company);
+        void Delete(int company);
+        int Save();
     }
 }

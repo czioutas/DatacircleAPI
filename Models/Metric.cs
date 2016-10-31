@@ -16,7 +16,7 @@ namespace DatacircleAPI.Models
     {
         [Key, Column("Id")]
         public int ID { get; set; }
-        public string Title { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
         public string Query { get; set; }
         public ChartType ChartType { get; set; }

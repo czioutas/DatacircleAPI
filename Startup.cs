@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.Swagger.Model;
-using Pomelo.EntityFrameworkCore.MySql;
 using DatacircleAPI.Settings;
 using System.Text;
 using DatacircleAPI.Database;
@@ -13,7 +12,6 @@ using DatacircleAPI.Repositories;
 using DatacircleAPI.Services;
 using DatacircleAPI.Models;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 

@@ -16,8 +16,7 @@ namespace DatacircleAPI.Models
         [Key, Column("Id")]
         public int ID { get; set; }
         [Required]
-        [Column(TypeName = "varchar(100)")]
-        [StringLength(50, ErrorMessage = "The First Name must be less than {1} characters.")]                
+        [Column(TypeName = "varchar(100)")]                
         public string Title { get; set; }
         [Column(TypeName = "varchar(100)")]                
         public string Description { get; set; }
