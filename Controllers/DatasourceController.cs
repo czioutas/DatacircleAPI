@@ -3,12 +3,16 @@ using Microsoft.Extensions.Logging;
 using DatacircleAPI.Models;
 using DatacircleAPI.ViewModel;
 using DatacircleAPI.Services;
-
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using System;
 
 namespace DatacircleAPI.Controllers
 {
 
     [Route("api/[controller]")]
+    [Authorize(ActiveAuthenticationSchemes = "Identity.Application")]
+    // [Authorize]
     public class DatasourceController : Controller
     {
         private readonly ILogger _logger;
@@ -39,6 +43,9 @@ namespace DatacircleAPI.Controllers
         [HttpPost]
         public IActionResult Create(DatasourceViewModel datasourceViewModel)
         {            
+            datasourceViewModel.datasource.CompanyFk = HttpContext.Session.GetInt32("FkCompany").GetValueOrDefault();
+            datasourceViewModel.connectionDetails.CompanyFk = HttpContext.Session.GetInt32("FkCompany").GetValueOrDefault();
+            
             this._datasourceService.Create(datasourceViewModel.datasource, datasourceViewModel.connectionDetails);
                 
             return this.Ok();
@@ -57,9 +64,14 @@ namespace DatacircleAPI.Controllers
                 return this.BadRequest();
             }
 
-            this._datasourceService.Update(datasourceVm);
+            Datasource updatedDatasource = this._datasourceService.Update(datasourceVm);
 
-            return this.Ok();        
+            if (updatedDatasource == null) 
+            {
+                return this.NotFound();
+            }
+
+            return this.Ok();
         }
 
         // DELETE api/datasource/5

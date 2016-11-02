@@ -16,8 +16,8 @@ namespace DatacircleAPI.Repositories
             this._context = context;
         }
 
-        Metric IMetricRepository.Create(WidgetViewModel widgetVm)
-        {
+        Metric IMetricRepository.Create(Metric metric)
+        {                        
             DateTime now = DateTime.Now;
             
             metric.CreatedAt = now;
@@ -39,21 +39,34 @@ namespace DatacircleAPI.Repositories
             return this._context.Metric.FirstOrDefault(m => m.ID == metricId);
         }
 
-        void IMetricRepository.Update(WidgetViewModel widgetVm)
+        Metric IMetricRepository.Update(Metric metric)
         {            
             var _metric = this._context.Metric            
-            //.Include(ds => ds.Datasource)
-            .Where(m => m.ID == widgetVm.metric.ID).FirstOrDefault<Metric>();
+            .Where(m => m.ID == metric.ID).FirstOrDefault<Metric>();
+
+            Console.WriteLine("input: " + metric.Description);
+            Console.WriteLine("current: " + _metric.Description);
             
-            _metric.Description = widgetVm.metric.Description ?? _metric.Description;
-            _metric.Name = widgetVm.metric.Name ?? _metric.Name;
-            _metric.Query = widgetVm.metric.Query ?? _metric.Query;
-            _metric.ChartType = _metric.ChartType;
-            _metric.DatasourceFk = widgetVm.metric.DatasourceFk;
+            
+            _metric.Description = metric.Description ?? _metric.Description;
+
+
+            Console.WriteLine("output: " + metric.Description);
+
+            _metric.Name = metric.Name ?? _metric.Name;
+            _metric.Query = metric.Query ?? _metric.Query;
+
+            if(Enum.IsDefined(typeof(ChartType), metric.ChartType)) {
+                _metric.ChartType = metric.ChartType;
+            }
+
+            _metric.DatasourceFk = metric.DatasourceFk > 0 ? metric.DatasourceFk : _metric.DatasourceFk;
             
             _metric.UpdatedAt = DateTime.Now;
+
+            Console.WriteLine("as");
              
-            this._context.Metric.Update(_metric);
+            return this._context.Metric.Update(_metric).Entity;
         }
 
         int IMetricRepository.Save()

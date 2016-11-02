@@ -8,7 +8,7 @@ using DatacircleAPI.Database;
 namespace DatacircleAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20161026055845_fresh")]
+    [Migration("20161102173911_fresh")]
     partial class fresh
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,6 +79,8 @@ namespace DatacircleAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("Id");
 
+                    b.Property<int>("CompanyFk");
+
                     b.Property<string>("ConnectionString")
                         .HasColumnType("varchar(250)");
 
@@ -102,6 +104,8 @@ namespace DatacircleAPI.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("CompanyFk");
+
                     b.ToTable("ConnectionDetails");
                 });
 
@@ -110,6 +114,8 @@ namespace DatacircleAPI.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("Id");
+
+                    b.Property<int>("CompanyFk");
 
                     b.Property<int>("ConnectionDetailsFk");
 
@@ -120,14 +126,15 @@ namespace DatacircleAPI.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("varchar(100)")
-                        .HasAnnotation("MaxLength", 50);
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("Type");
 
                     b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CompanyFk");
 
                     b.HasIndex("ConnectionDetailsFk");
 
@@ -142,19 +149,26 @@ namespace DatacircleAPI.Migrations
 
                     b.Property<int>("ChartType");
 
+                    b.Property<int>("CompanyFk");
+
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<int>("DatasourceFk");
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .IsRequired();
 
-                    b.Property<string>("Query");
+                    b.Property<string>("Name")
+                        .IsRequired();
 
-                    b.Property<string>("Title");
+                    b.Property<string>("Query")
+                        .IsRequired();
 
                     b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CompanyFk");
 
                     b.HasIndex("DatasourceFk");
 
@@ -400,8 +414,19 @@ namespace DatacircleAPI.Migrations
                         .HasForeignKey("UserFk");
                 });
 
+            modelBuilder.Entity("DatacircleAPI.Models.ConnectionDetails", b =>
+                {
+                    b.HasOne("DatacircleAPI.Models.ConnectionDetails", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyFk");
+                });
+
             modelBuilder.Entity("DatacircleAPI.Models.Datasource", b =>
                 {
+                    b.HasOne("DatacircleAPI.Models.ConnectionDetails", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyFk");
+
                     b.HasOne("DatacircleAPI.Models.ConnectionDetails", "ConnectionDetails")
                         .WithMany()
                         .HasForeignKey("ConnectionDetailsFk");
@@ -409,6 +434,10 @@ namespace DatacircleAPI.Migrations
 
             modelBuilder.Entity("DatacircleAPI.Models.Metric", b =>
                 {
+                    b.HasOne("DatacircleAPI.Models.ConnectionDetails", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyFk");
+
                     b.HasOne("DatacircleAPI.Models.Datasource", "Datasource")
                         .WithMany()
                         .HasForeignKey("DatasourceFk");

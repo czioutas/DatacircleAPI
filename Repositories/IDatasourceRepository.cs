@@ -7,7 +7,7 @@ namespace DatacircleAPI.Repositories
     {
         Datasource Create(Datasource datasource);
         Datasource Get(int datasourceId);
-        void Update(DatasourceViewModel datasource);
+        Datasource Update(DatasourceViewModel datasource);
         void Delete(int datasourceId);
         int Save();
     }

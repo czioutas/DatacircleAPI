@@ -5,6 +5,7 @@ using DatacircleAPI.Models;
 using DatacircleAPI.Services;
 using DatacircleAPI.ViewModel;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,6 @@ namespace DatacircleAPI.Controllers
     {
         private readonly AccountService _accountService;
         private readonly SignInManager<User> _signInManager;
-
         private readonly UserManager<User> _userManager;
 
         public AccountController(AccountService accountService, SignInManager<User> signInManager, UserManager<User> userManager)
@@ -26,12 +26,22 @@ namespace DatacircleAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(ActiveAuthenticationSchemes = "Bearer, Identity.Application")]
+        // [Authorize(ActiveAuthenticationSchemes = "Bearer, Identity.Application")]
+        [Authorize]
         public async Task<IActionResult> GetUser()
         {
-            Console.WriteLine(HttpContext.User.ToString());
-            // User user = await _userManager.GetUserAsync(HttpContext.User);
-            return this.Ok("hello");
+            // Console.WriteLine(HttpContext.User);
+            User user = await _userManager.GetUserAsync(HttpContext.User);
+            return this.Ok(user);
+        }
+
+        [HttpGet]
+        // [Authorize(ActiveAuthenticationSchemes = "Bearer, Identity.Application")]
+        [Authorize]
+        public async Task<IActionResult> GetUserSession()
+        {            
+            // return this.Ok(HttpContext.Session.GetString("FkCompany"));
+            return this.Ok(HttpContext.Session);
         }
 
         // //
@@ -82,6 +92,20 @@ namespace DatacircleAPI.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
+            return this.Ok();
+        }
+
+        //
+        // GET: /Account/ConfirmEmail/{verificationKey}
+        [HttpGet("{verificationKey}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string verificationKey)
+        {
+            if (verificationKey.Length == 0) {
+                return this.BadRequest();
+            }
+
+            this._accountService.ConfirmEmail(verificationKey);
             return this.Ok();
         }
     }

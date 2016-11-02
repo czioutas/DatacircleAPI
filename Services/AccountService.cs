@@ -13,6 +13,7 @@ namespace DatacircleAPI.Services
     {
         private readonly ICompanyRepository _companyRepository;
         private readonly IRoleRepository _roleRepository;
+        private readonly IUserRepository _userRepository;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IEmailSender _emailSender;
@@ -20,6 +21,7 @@ namespace DatacircleAPI.Services
         public AccountService(
             ICompanyRepository companyRepository,
             IRoleRepository roleRepository,
+            IUserRepository userRepository,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             IEmailSender emailSender)
@@ -27,6 +29,7 @@ namespace DatacircleAPI.Services
             this._companyRepository = companyRepository;
             this._roleRepository = roleRepository;
             this._userManager = userManager;
+            this._userRepository = userRepository;
             this._signInManager = signInManager;
             this._emailSender = emailSender;
         }
@@ -66,6 +69,15 @@ namespace DatacircleAPI.Services
                 }
                 throw new ResponseException(message);
             }
+        }
+
+        public bool ConfirmEmail(string verificationKey)
+        {
+            User _user = this._userRepository.FindByVerificationToken(verificationKey);
+            _user.IsVerified = true;
+            
+            int result = this._userRepository.Save();
+            return Convert.ToBoolean(result); 
         }
 
         private User getDefaultNewUser(RegisterViewModel vm, int CompanyFk, int RoleFk)

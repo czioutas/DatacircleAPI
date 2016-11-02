@@ -28,10 +28,14 @@ namespace DatacircleAPI.Services
             return this._datasourceRepository.Get(id);
         }
 
-        public void Update(DatasourceViewModel datasourceVm) 
+        public Datasource Update(DatasourceViewModel datasourceVm) 
         {
-            this._datasourceRepository.Update(datasourceVm);
-            this._datasourceRepository.Save();
+            Datasource updatedDatasource = this._datasourceRepository.Update(datasourceVm);
+            if (this._datasourceRepository.Save() > 0) {
+                return updatedDatasource;
+            }
+
+            return null;
         }
 
         public void Delete(int id)

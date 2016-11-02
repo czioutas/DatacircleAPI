@@ -1,5 +1,4 @@
 using DatacircleAPI.Models;
-using DatacircleAPI.ViewModel;
 
 namespace DatacircleAPI.Repositories
 {
@@ -8,8 +7,8 @@ namespace DatacircleAPI.Repositories
         Role Create(Role role);
         Role Get(int roleId);
         Role getDefaultNewRole();
-        void Update(Company company);
-        void Delete(int company);
+        void Update(Role role);
+        void Delete(int roleId);
         int Save();
     }
 }

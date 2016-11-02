@@ -1,36 +1,39 @@
 using DatacircleAPI.Models;
 using DatacircleAPI.ViewModel;
 using DatacircleAPI.Repositories;
+using System.Threading.Tasks;
+using System;
 
 namespace DatacircleAPI.Services
 {
     public class MetricService
     {
         private readonly IMetricRepository _metricRepository;
+        private readonly IDatasourceRepository _datasourceRepository;
 
-        public MetricService(IMetricRepository metricRepository)
+        public MetricService(IMetricRepository metricRepository, IDatasourceRepository datasourceRepository)
         {
             this._metricRepository = metricRepository;
+            this._datasourceRepository = datasourceRepository;
         }
 
-        public void Create(Datasource datasource, ConnectionDetails connectionDetails)
-        {
-            ConnectionDetails _connectionDetails = this._connectionRepository.Create(connectionDetails);
-            datasource.ConnectionDetailsFk = connectionDetails.ID;
-            
-            this._datasourceRepository.Create(datasource);
-            this._datasourceRepository.Save();            
+        public  async Task Create(Metric metric)
+        {           
+            this._metricRepository.Create(metric);
+            this._datasourceRepository.Save();  
+            return;          
         }
 
-        public Datasource Get(int id)
+        public Metric Get(int id)
         {
             return this._metricRepository.Get(id);
         }
 
-        public void Update(DatasourceViewModel datasourceVm) 
+        public Metric Update(Metric metric) 
         {
-            this._metricRepository.Update(datasourceVm);
+            Metric newMetricEntity = this._metricRepository.Update(metric);
             this._metricRepository.Save();
+            return newMetricEntity;            
         }
 
         public void Delete(int id)

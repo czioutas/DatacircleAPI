@@ -24,6 +24,9 @@ namespace DatacircleAPI.Models
         public int ConnectionDetailsFk { get; set; }
         [ForeignKey("ConnectionDetailsFk")]
         public ConnectionDetails ConnectionDetails { get; set; }
+        public int CompanyFk { get; set; }
+        [ForeignKey("CompanyFk")]
+        public ConnectionDetails Company { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

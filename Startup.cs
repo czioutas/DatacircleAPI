@@ -14,6 +14,8 @@ using DatacircleAPI.Models;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System;
+using DatacircleAPI.Middleware;
 
 namespace DatacircleAPI
 {
@@ -58,11 +60,14 @@ namespace DatacircleAPI
                 });
             });
 
-            services.AddIdentity<User, Role>()
-                .AddEntityFrameworkStores<ApplicationDbContext,int>();
-                //.AddDefaultTokenProviders();
+            services.AddIdentity<User, Role>(options => {
+                options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromDays(1);
+            }).AddEntityFrameworkStores<ApplicationDbContext,int>();
+            //.AddDefaultTokenProviders();
 
             services.AddMvc();
+            services.AddDistributedMemoryCache(); // Adds a default in-memory implementation of IDistributedCache
+            services.AddSession();
 
             // Settings files should come first.
             // Most services are going to depend on the Settings files being there.
@@ -76,6 +81,8 @@ namespace DatacircleAPI
             services.AddScoped<IConnectionDetailsRepository, ConnectionDetailsRepository>();
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IMetricRepository, MetricRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             // instanciate TokenService with specific TokenProviderOptions            
             TokenProviderOptions _tpo = new TokenProviderOptions { SigningCredentials = this._sc };
@@ -87,6 +94,7 @@ namespace DatacircleAPI
             services.AddScoped<AccountService>();
             services.AddScoped<TokenService>();            
             services.AddScoped<MailTemplateService>();
+            services.AddScoped<MetricService>();
             services.AddScoped<IEmailSender, AuthMessageSender>();
 
             services.AddOptions();
@@ -126,6 +134,8 @@ namespace DatacircleAPI
             });
 
             app.UseIdentity(); 
+            app.UseSession();
+            app.UsePopulateUserSession();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

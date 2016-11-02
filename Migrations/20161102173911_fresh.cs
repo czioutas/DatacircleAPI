@@ -30,6 +30,7 @@ namespace DatacircleAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    CompanyFk = table.Column<int>(nullable: false),
                     ConnectionString = table.Column<string>(type: "varchar(250)", nullable: true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Database = table.Column<string>(type: "varchar(250)", nullable: true),
@@ -42,6 +43,12 @@ namespace DatacircleAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ConnectionDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ConnectionDetails_ConnectionDetails_CompanyFk",
+                        column: x => x.CompanyFk,
+                        principalTable: "ConnectionDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -112,16 +119,23 @@ namespace DatacircleAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    CompanyFk = table.Column<int>(nullable: false),
                     ConnectionDetailsFk = table.Column<int>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(type: "varchar(100)", nullable: true),
-                    Title = table.Column<string>(type: "varchar(100)", maxLength: 50, nullable: false),
+                    Title = table.Column<string>(type: "varchar(100)", nullable: false),
                     Type = table.Column<int>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Datasource", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Datasource_ConnectionDetails_CompanyFk",
+                        column: x => x.CompanyFk,
+                        principalTable: "ConnectionDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Datasource_ConnectionDetails_ConnectionDetailsFk",
                         column: x => x.ConnectionDetailsFk,
@@ -208,16 +222,23 @@ namespace DatacircleAPI.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGeneratedOnAdd", true),
                     ChartType = table.Column<int>(nullable: false),
+                    CompanyFk = table.Column<int>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     DatasourceFk = table.Column<int>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    Query = table.Column<string>(nullable: true),
-                    Title = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Query = table.Column<string>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Metric", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Metric_ConnectionDetails_CompanyFk",
+                        column: x => x.CompanyFk,
+                        principalTable: "ConnectionDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Metric_Datasource_DatasourceFk",
                         column: x => x.DatasourceFk,
@@ -324,9 +345,24 @@ namespace DatacircleAPI.Migrations
                 column: "UserFk");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ConnectionDetails_CompanyFk",
+                table: "ConnectionDetails",
+                column: "CompanyFk");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Datasource_CompanyFk",
+                table: "Datasource",
+                column: "CompanyFk");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Datasource_ConnectionDetailsFk",
                 table: "Datasource",
                 column: "ConnectionDetailsFk");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Metric_CompanyFk",
+                table: "Metric",
+                column: "CompanyFk");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Metric_DatasourceFk",
