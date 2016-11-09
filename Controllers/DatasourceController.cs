@@ -82,16 +82,12 @@ namespace DatacircleAPI.Controllers
                 return this.NotFound();
             }
 
-            if (id == 0 || datasourceVm.datasource.ID == 0)
-            {
-                return this.BadRequest();
-            }
-
+            datasourceVm.datasource.CompanyFk = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
             Datasource updatedDatasource = this._datasourceService.Update(datasourceVm);
 
             if (updatedDatasource == null)
             {
-                return this.NotFound();
+                return this.BadRequest();
             }
 
             return this.Ok();

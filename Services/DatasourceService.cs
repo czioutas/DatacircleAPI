@@ -2,6 +2,7 @@ using DatacircleAPI.Models;
 using DatacircleAPI.ViewModel;
 using DatacircleAPI.Repositories;
 using System.Collections.Generic;
+using System;
 
 namespace DatacircleAPI.Services
 {
@@ -38,8 +39,8 @@ namespace DatacircleAPI.Services
         {
             Datasource updatedDatasource = this._datasourceRepository.Update(datasourceVm);
 
-            if (this._datasourceRepository.Save() > 0)
-            {
+            if (updatedDatasource != null) {
+                this._datasourceRepository.Save();
                 return updatedDatasource;
             }
 

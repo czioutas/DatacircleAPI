@@ -23,6 +23,7 @@ namespace DatacircleAPI.Repositories
 
             datasource.CreatedAt = now;
             datasource.UpdatedAt = now;
+
             return this._context.Datasource.Add(datasource).Entity;
         }
 
@@ -43,9 +44,10 @@ namespace DatacircleAPI.Repositories
         Datasource IDatasourceRepository.Update(DatasourceViewModel datasourceVm)
         {
             Datasource _datasource = this._context.Datasource
-            .Include(ds => ds.ConnectionDetails)
-            .Where(ds => ds.CompanyFk == datasourceVm.datasource.CompanyFk)
-            .FirstOrDefault(ds => ds.ID == datasourceVm.datasource.ID);
+                .Include(ds => ds.ConnectionDetails)
+                .Where(ds => ds.CompanyFk == datasourceVm.datasource.CompanyFk)
+                .Where(ds => ds.ID == datasourceVm.datasource.ID)
+                .FirstOrDefault();
 
             if (_datasource == null)
             {
@@ -56,10 +58,6 @@ namespace DatacircleAPI.Repositories
             {
                 _datasource.Type = datasourceVm.datasource.Type;
             }
-
-            Console.WriteLine(datasourceVm.datasource.Type);
-            Console.WriteLine(_datasource.Type);
-            Console.WriteLine(Enum.IsDefined(typeof(DatacircleAPI.Models.Type), datasourceVm.datasource.Type));
 
             _datasource.Description = datasourceVm.datasource.Description ?? _datasource.Description;
             _datasource.Title = datasourceVm.datasource.Title ?? _datasource.Title;

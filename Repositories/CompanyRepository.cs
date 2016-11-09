@@ -2,8 +2,6 @@ using System;
 using System.Linq;
 using DatacircleAPI.Database;
 using DatacircleAPI.Models;
-using DatacircleAPI.ViewModel;
-using Microsoft.EntityFrameworkCore;
 
 namespace DatacircleAPI.Repositories
 {
@@ -28,7 +26,7 @@ namespace DatacircleAPI.Repositories
 
         void ICompanyRepository.Delete(int companyId)
         {
-            var company = this._context.Company.FirstOrDefault(c => c.ID == companyId);
+            Company company = this._context.Company.FirstOrDefault(c => c.ID == companyId);
             if (company != null) {
                 this._context.Remove(company);
             }
@@ -47,8 +45,11 @@ namespace DatacircleAPI.Repositories
 
         void ICompanyRepository.Update(Company company)
         {            
-            var _company = this._context.Company
-            .Where(c => c.ID == company.ID).FirstOrDefault<Company>();
+            Company _company = this._context.Company.FirstOrDefault(c => c.ID == company.ID);
+
+            if (_company == null) {
+                return;
+            }
 
             _company.Name = company.Name != null ? company.Name : _company.Name;
             _company.Description = company.Description != null ? company.Description : _company.Description;                        

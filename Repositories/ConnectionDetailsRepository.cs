@@ -17,21 +17,11 @@ namespace DatacircleAPI.Repositories
         ConnectionDetails IConnectionDetailsRepository.Create(ConnectionDetails connectionDetails)
         {
             DateTime now = DateTime.Now;
-            
+
             connectionDetails.CreatedAt = now;
             connectionDetails.UpdatedAt = now;
-            
-            return this._context.ConnectionDetails.Add(connectionDetails).Entity;
-        }
 
-        void IConnectionDetailsRepository.Delete(int connectionDetailsId)
-        {
-            ConnectionDetails connectionDetails = this._context.ConnectionDetails
-                .FirstOrDefault(cd => cd.ID == connectionDetailsId);
-                
-            if (connectionDetails != null) {
-                this._context.ConnectionDetails.Remove(connectionDetails);
-            }        
+            return this._context.ConnectionDetails.Add(connectionDetails).Entity;
         }
 
         ConnectionDetails IConnectionDetailsRepository.Get(int connectionDetailsId)
@@ -39,15 +29,25 @@ namespace DatacircleAPI.Repositories
             return this._context.ConnectionDetails.FirstOrDefault(ds => ds.ID == connectionDetailsId);
         }
 
-        int IConnectionDetailsRepository.Save()
+        void IConnectionDetailsRepository.Delete(int connectionDetailsId)
         {
-           return this._context.SaveChanges();
-        }
+            ConnectionDetails connectionDetails = this._context.ConnectionDetails
+                .FirstOrDefault(cd => cd.ID == connectionDetailsId);
 
+            if (connectionDetails != null)
+            {
+                this._context.ConnectionDetails.Remove(connectionDetails);
+            }
+        }
         void IConnectionDetailsRepository.Update(ConnectionDetails connectionDetails)
         {
             connectionDetails.UpdatedAt = DateTime.Now;
             this._context.ConnectionDetails.Update(connectionDetails);
+        }
+
+        int IConnectionDetailsRepository.Save()
+        {
+            return this._context.SaveChanges();
         }
     }
 }
