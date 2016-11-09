@@ -1,4 +1,5 @@
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using DatacircleAPI.Application;
 using DatacircleAPI.Models;
@@ -10,7 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DatacircleAPI.Controllers
-{   
+{
     [Route("api/[controller]/[action]")]
     public class AccountController : Controller
     {
@@ -30,8 +31,8 @@ namespace DatacircleAPI.Controllers
         [Authorize]
         public async Task<IActionResult> GetUser()
         {
-            // Console.WriteLine(HttpContext.User);
             User user = await _userManager.GetUserAsync(HttpContext.User);
+
             return this.Ok(user);
         }
 
@@ -39,9 +40,15 @@ namespace DatacircleAPI.Controllers
         // [Authorize(ActiveAuthenticationSchemes = "Bearer, Identity.Application")]
         [Authorize]
         public async Task<IActionResult> GetUserSession()
-        {            
-            // return this.Ok(HttpContext.Session.GetString("FkCompany"));
-            return this.Ok(HttpContext.Session);
+        {
+            String str = "";
+
+            foreach (var item in HttpContext.User.Claims)
+            {
+                str += item + Environment.NewLine;
+            }
+
+            return this.Ok(str);
         }
 
         // //
@@ -50,38 +57,41 @@ namespace DatacircleAPI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel loginVm)
         {
-            if(ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
                 var result = await _signInManager.PasswordSignInAsync(loginVm.Email, loginVm.Password, loginVm.RememberMe, lockoutOnFailure: true);
-                
+
                 if (!result.Succeeded)
                 {
-                    throw new ResponseException("A combination of those credentials did not match.");                 
+                    throw new ResponseException("A combination of those credentials did not match.");
                 }
-                    
+
                 if (result.IsLockedOut)
                 {
-                    return this.StatusCode(429);                    
+                    return this.StatusCode(429);
                 }
 
                 return this.Ok();
             }
-            
+
             return this.BadRequest();
         }
 
         //
         // POST: /Account/Register
         [HttpPost]
-        [AllowAnonymous]        
+        [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel registerVm)
         {
-            try {
+            try
+            {
                 await _accountService.Register(registerVm);
-            } 
-            catch(ResponseException exception) {
+            }
+            catch (ResponseException exception)
+            {
                 return this.BadRequest(exception.Message);
             }
-            
+
             return this.Ok();
         }
 
@@ -101,7 +111,8 @@ namespace DatacircleAPI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string verificationKey)
         {
-            if (verificationKey.Length == 0) {
+            if (verificationKey.Length == 0)
+            {
                 return this.BadRequest();
             }
 

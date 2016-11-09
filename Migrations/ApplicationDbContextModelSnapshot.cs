@@ -78,8 +78,6 @@ namespace DatacircleAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("Id");
 
-                    b.Property<int>("CompanyFk");
-
                     b.Property<string>("ConnectionString")
                         .HasColumnType("varchar(250)");
 
@@ -102,8 +100,6 @@ namespace DatacircleAPI.Migrations
                         .HasColumnType("varchar(250)");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("CompanyFk");
 
                     b.ToTable("ConnectionDetails");
                 });
@@ -411,13 +407,6 @@ namespace DatacircleAPI.Migrations
                     b.HasOne("DatacircleAPI.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserFk");
-                });
-
-            modelBuilder.Entity("DatacircleAPI.Models.ConnectionDetails", b =>
-                {
-                    b.HasOne("DatacircleAPI.Models.ConnectionDetails", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyFk");
                 });
 
             modelBuilder.Entity("DatacircleAPI.Models.Datasource", b =>

@@ -3,6 +3,7 @@ using DatacircleAPI.ViewModel;
 using DatacircleAPI.Repositories;
 using System.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 
 namespace DatacircleAPI.Services
 {
@@ -29,6 +30,16 @@ namespace DatacircleAPI.Services
             return this._metricRepository.Get(id);
         }
 
+        public IEnumerable<Metric> GetAll(int companyFk)
+        {
+            return this._metricRepository.GetAll(companyFk);
+        }
+
+        public IList<Metric> GetAllByDatasource(Datasource datasource)
+        {
+            return this._metricRepository.GetAllByDatasource(datasource);
+        }
+
         public Metric Update(Metric metric) 
         {
             Metric newMetricEntity = this._metricRepository.Update(metric);
@@ -36,10 +47,11 @@ namespace DatacircleAPI.Services
             return newMetricEntity;            
         }
 
-        public void Delete(int id)
+        public bool Delete(Metric metric)
         {
-            this._metricRepository.Delete(id);
-            this._metricRepository.Save();
+            this._metricRepository.Delete(metric);
+
+            return Convert.ToBoolean(this._metricRepository.Save());
         }
     }
 }

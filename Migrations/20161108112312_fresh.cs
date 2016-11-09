@@ -30,7 +30,6 @@ namespace DatacircleAPI.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGeneratedOnAdd", true),
-                    CompanyFk = table.Column<int>(nullable: false),
                     ConnectionString = table.Column<string>(type: "varchar(250)", nullable: true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Database = table.Column<string>(type: "varchar(250)", nullable: true),
@@ -43,12 +42,6 @@ namespace DatacircleAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ConnectionDetails", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ConnectionDetails_ConnectionDetails_CompanyFk",
-                        column: x => x.CompanyFk,
-                        principalTable: "ConnectionDetails",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -343,11 +336,6 @@ namespace DatacircleAPI.Migrations
                 name: "IX_Addresses_UserFk",
                 table: "Addresses",
                 column: "UserFk");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ConnectionDetails_CompanyFk",
-                table: "ConnectionDetails",
-                column: "CompanyFk");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Datasource_CompanyFk",

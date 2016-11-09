@@ -31,10 +31,11 @@ namespace DatacircleAPI.Controllers
         {
             User user = await _userManager.GetUserAsync(HttpContext.User);
 
-            if (user == null) {
+            if (user == null)
+            {
                 return this.BadRequest();
             }
-            
+
             return this.Ok(this._tokenService.GenerateToken(HttpContext, user));
         }
     }

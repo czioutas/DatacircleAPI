@@ -19,10 +19,6 @@ namespace DatacircleAPI.Models
         [Column(TypeName = "varchar(250)")]                
         public string Database { get; set; }
         public int Port { get; set; }
-        public int CompanyFk { get; set; }
-        [ForeignKey("CompanyFk")]
-        public ConnectionDetails Company { get; set; }
-
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

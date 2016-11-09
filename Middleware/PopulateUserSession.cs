@@ -25,15 +25,17 @@ namespace DatacircleAPI.Middleware
         }
 
         public async Task Invoke(HttpContext httpContext)
-        {     
-            if (_signInManager.IsSignedIn(httpContext.User) && !httpContext.Session.Keys.Contains("FkCompany")) {
+        {
+            if (_signInManager.IsSignedIn(httpContext.User) && !httpContext.Session.Keys.Contains("FkCompany"))
+            {
                 User _user = await _userManager.GetUserAsync(httpContext.User);
-                if (_user != null) {
+                if (_user != null)
+                {
                     httpContext.Session.SetInt32("FkCompany", _user.CompanyFk);
                     return;
                 }
             }
-            
+
             await _next(httpContext);
         }
     }

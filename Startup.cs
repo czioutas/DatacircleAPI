@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System;
 using DatacircleAPI.Middleware;
+using Microsoft.AspNetCore.Identity;
 
 namespace DatacircleAPI
 {
@@ -60,11 +61,17 @@ namespace DatacircleAPI
                 });
             });
 
+            // services.AddScoped<IUserClaimsPrincipalFactory<User>, AppClaimsPrincipalFactory>();
+
             services.AddIdentity<User, Role>(options => {
-                options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromDays(1);
+                options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromDays(1);                
             }).AddEntityFrameworkStores<ApplicationDbContext,int>();
+            
+            //.AddRoleManager<RoleManager<Role>>();
             //.AddDefaultTokenProviders();
 
+            services.AddScoped<IUserClaimsPrincipalFactory<User>, AppClaimsPrincipalFactory<User, Role>>();
+                            
             services.AddMvc();
             services.AddDistributedMemoryCache(); // Adds a default in-memory implementation of IDistributedCache
             services.AddSession();
@@ -107,7 +114,6 @@ namespace DatacircleAPI
             });
 
             services.AddSwaggerGen();
-
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -135,7 +141,7 @@ namespace DatacircleAPI
 
             app.UseIdentity(); 
             app.UseSession();
-            app.UsePopulateUserSession();
+            // app.UsePopulateUserSession();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

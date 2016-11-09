@@ -26,7 +26,9 @@ namespace DatacircleAPI.Repositories
 
         void IConnectionDetailsRepository.Delete(int connectionDetailsId)
         {
-            var connectionDetails = this._context.ConnectionDetails.FirstOrDefault(cd => cd.ID == connectionDetailsId);
+            ConnectionDetails connectionDetails = this._context.ConnectionDetails
+                .FirstOrDefault(cd => cd.ID == connectionDetailsId);
+                
             if (connectionDetails != null) {
                 this._context.ConnectionDetails.Remove(connectionDetails);
             }        

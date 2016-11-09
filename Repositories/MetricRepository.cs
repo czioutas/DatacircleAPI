@@ -1,9 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using DatacircleAPI.Database;
 using DatacircleAPI.Models;
-using DatacircleAPI.ViewModel;
-using Microsoft.EntityFrameworkCore;
 
 namespace DatacircleAPI.Repositories
 {
@@ -26,32 +25,31 @@ namespace DatacircleAPI.Repositories
             return this._context.Metric.Add(metric).Entity;            
         }
 
-        void IMetricRepository.Delete(int metricId)
-        {
-            var metric = this._context.Metric.FirstOrDefault(m => m.ID == metricId);
-            if (metric != null) {
-                this._context.Remove(metric);
-            }
-        }
-
         Metric IMetricRepository.Get(int metricId)
         {
-            return this._context.Metric.FirstOrDefault(m => m.ID == metricId);
+            return this._context.Metric.Where(m => m.ID == metricId).FirstOrDefault();
+        }
+
+        IEnumerable<Metric> IMetricRepository.GetAll(int companyFk)
+        {
+            return this._context.Metric.Where(m => m.CompanyFk == companyFk);
+        }
+
+        IList<Metric> IMetricRepository.GetAllByDatasource(Datasource datasource)
+        {
+            return this._context.Metric.Where(m => m.DatasourceFk == datasource.ID).ToList();
         }
 
         Metric IMetricRepository.Update(Metric metric)
         {            
-            var _metric = this._context.Metric            
-            .Where(m => m.ID == metric.ID).FirstOrDefault<Metric>();
+            Metric _metric = this._context.Metric            
+            .Where(m => m.ID == metric.ID).FirstOrDefault();
 
-            Console.WriteLine("input: " + metric.Description);
-            Console.WriteLine("current: " + _metric.Description);
-            
-            
+            if (_metric == null) {
+                return null;
+            }
+
             _metric.Description = metric.Description ?? _metric.Description;
-
-
-            Console.WriteLine("output: " + metric.Description);
 
             _metric.Name = metric.Name ?? _metric.Name;
             _metric.Query = metric.Query ?? _metric.Query;
@@ -63,15 +61,25 @@ namespace DatacircleAPI.Repositories
             _metric.DatasourceFk = metric.DatasourceFk > 0 ? metric.DatasourceFk : _metric.DatasourceFk;
             
             _metric.UpdatedAt = DateTime.Now;
-
-            Console.WriteLine("as");
              
             return this._context.Metric.Update(_metric).Entity;
+        }
+
+        void IMetricRepository.Delete(Metric metric)
+        {
+            // var test = this._context.Metric.FromSql("SELECT * FROM Metric where ID = {0} and CompanyFk = {1}", metric.ID, metric.CompanyFk).ToList();            
+            Metric _metric = this._context.Metric
+                    .Where(m => m.ID == metric.ID)
+                    .Where(m => m.CompanyFk == metric.CompanyFk).FirstOrDefault();
+
+            if (_metric != null) {
+                this._context.Remove(_metric);            
+            }
         }
 
         int IMetricRepository.Save()
         {
            return this._context.SaveChanges();
-        } 
+        }
     }
 }
