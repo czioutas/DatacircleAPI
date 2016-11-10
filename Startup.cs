@@ -103,6 +103,7 @@ namespace DatacircleAPI
             services.AddScoped<MailTemplateService>();
             services.AddScoped<MetricService>();
             services.AddScoped<IEmailSender, AuthMessageSender>();
+            services.AddScoped<DataEngineService>();
 
             services.AddOptions();
 

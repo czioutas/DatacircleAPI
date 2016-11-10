@@ -68,18 +68,20 @@ namespace DatacircleAPI.Controllers
             }
 
             int DatasourceId = metric.DatasourceId.GetValueOrDefault();
+            int CompanyFk = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
             
             if (DatasourceId == 0) {
                 return this.BadRequest("Invalid Datasource Id.");
             }
 
-            Datasource _datasource = this._datasourceService.Get(DatasourceId);
+            Datasource datasourceContainer = new Datasource { ID = DatasourceId, CompanyId = CompanyFk };
+            Datasource _datasource = this._datasourceService.Get(datasourceContainer);
 
             if (_datasource == null) {
                 return this.BadRequest("No such Datasource found.");
             }
             
-            metric.CompanyId = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
+            metric.CompanyId = CompanyFk;
             metric.Owner = int.Parse(HttpContext.User.FindFirst("UserId")?.Value);
 
             await this._metricService.Create(metric);
@@ -112,7 +114,10 @@ namespace DatacircleAPI.Controllers
                 return this.BadRequest("Invalid Datasource Id.");
             }
 
-            Datasource _datasource = this._datasourceService.Get(DatasourceId);
+            int CompanyFk = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
+
+            Datasource datasourceContainer = new Datasource { ID = DatasourceId, CompanyId = CompanyFk };
+            Datasource _datasource = this._datasourceService.Get(datasourceContainer);            
 
             if (_datasource == null) {
                 return this.BadRequest("No such Datasource found.");

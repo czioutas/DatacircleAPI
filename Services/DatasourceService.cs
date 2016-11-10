@@ -50,7 +50,7 @@ namespace DatacircleAPI.Services
 
         public void Delete(Datasource datasource)
         {
-            Datasource _datasource = this._datasourceRepository.Get(datasource.ID);           
+            Datasource _datasource = this._datasourceRepository.Get(datasource);     
 
             if (_datasource != null)
             {
