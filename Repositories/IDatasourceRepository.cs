@@ -7,7 +7,7 @@ namespace DatacircleAPI.Repositories
     public interface IDatasourceRepository
     {
         Datasource Create(Datasource datasource);
-        Datasource Get(int datasourceId);
+        Datasource Get(Datasource datasource);
         IEnumerable<Datasource> GetAll(int companyFk);
         Datasource Update(DatasourceViewModel datasource);
         void Delete(Datasource datasource);

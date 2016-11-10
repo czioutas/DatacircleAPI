@@ -27,7 +27,7 @@ namespace DatacircleAPI.Database {
             builder.Entity<IdentityUserLogin<int>>(entity => entity.ToTable("UserLogins"));
             builder.Entity<IdentityUserToken<int>>(entity => entity.ToTable("UserTokens"));            
             builder.Entity<IdentityRoleClaim<int>>(entity => entity.ToTable("RoleClaims"));
-
+            
             foreach (var relationship in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;

@@ -80,7 +80,7 @@ namespace DatacircleAPI.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGeneratedOnAdd", true),
                     Admin = table.Column<bool>(nullable: false),
-                    ComapnyFk = table.Column<int>(nullable: false),
+                    CompanyId = table.Column<int>(nullable: true),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     DashboardRead = table.Column<bool>(nullable: false),
@@ -99,40 +99,9 @@ namespace DatacircleAPI.Migrations
                 {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetRoles_Company_ComapnyFk",
-                        column: x => x.ComapnyFk,
+                        name: "FK_AspNetRoles_Company_CompanyId",
+                        column: x => x.CompanyId,
                         principalTable: "Company",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Datasource",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
-                    CompanyFk = table.Column<int>(nullable: false),
-                    ConnectionDetailsFk = table.Column<int>(nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    Description = table.Column<string>(type: "varchar(100)", nullable: true),
-                    Title = table.Column<string>(type: "varchar(100)", nullable: false),
-                    Type = table.Column<int>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Datasource", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Datasource_ConnectionDetails_CompanyFk",
-                        column: x => x.CompanyFk,
-                        principalTable: "ConnectionDetails",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Datasource_ConnectionDetails_ConnectionDetailsFk",
-                        column: x => x.ConnectionDetailsFk,
-                        principalTable: "ConnectionDetails",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -144,7 +113,7 @@ namespace DatacircleAPI.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGeneratedOnAdd", true),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    CompanyFk = table.Column<int>(nullable: false),
+                    CompanyId = table.Column<int>(nullable: true),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
@@ -162,7 +131,7 @@ namespace DatacircleAPI.Migrations
                     PasswordHash = table.Column<string>(nullable: true),
                     PhoneNumber = table.Column<string>(nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(nullable: false),
-                    RoleFk = table.Column<int>(nullable: false),
+                    RoleId = table.Column<int>(nullable: true),
                     SecurityStamp = table.Column<string>(nullable: true),
                     Token = table.Column<string>(type: "varchar(250)", nullable: true),
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
@@ -174,14 +143,14 @@ namespace DatacircleAPI.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_Company_CompanyFk",
-                        column: x => x.CompanyFk,
+                        name: "FK_AspNetUsers_Company_CompanyId",
+                        column: x => x.CompanyId,
                         principalTable: "Company",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_AspNetRoles_RoleFk",
-                        column: x => x.RoleFk,
+                        name: "FK_AspNetUsers_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -209,38 +178,6 @@ namespace DatacircleAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Metric",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
-                    ChartType = table.Column<int>(nullable: false),
-                    CompanyFk = table.Column<int>(nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false),
-                    DatasourceFk = table.Column<int>(nullable: false),
-                    Description = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: false),
-                    Query = table.Column<string>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Metric", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Metric_ConnectionDetails_CompanyFk",
-                        column: x => x.CompanyFk,
-                        principalTable: "ConnectionDetails",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Metric_Datasource_DatasourceFk",
-                        column: x => x.DatasourceFk,
-                        principalTable: "Datasource",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Addresses",
                 columns: table => new
                 {
@@ -253,15 +190,53 @@ namespace DatacircleAPI.Migrations
                     Salutation = table.Column<int>(nullable: false),
                     Street = table.Column<string>(type: "varchar(100)", nullable: true),
                     UpdatedAt = table.Column<DateTime>(nullable: false),
-                    UserFk = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: true),
                     phone = table.Column<string>(type: "varchar(100)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Addresses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Addresses_AspNetUsers_UserFk",
-                        column: x => x.UserFk,
+                        name: "FK_Addresses_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Datasource",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    CompanyId = table.Column<int>(nullable: true),
+                    ConnectionDetailsId = table.Column<int>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    Description = table.Column<string>(type: "varchar(100)", nullable: true),
+                    Owner = table.Column<int>(nullable: true),
+                    Title = table.Column<string>(type: "varchar(100)", nullable: false),
+                    Type = table.Column<int>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Datasource", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Datasource_Company_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Company",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Datasource_ConnectionDetails_ConnectionDetailsId",
+                        column: x => x.ConnectionDetailsId,
+                        principalTable: "ConnectionDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Datasource_AspNetUsers_Owner",
+                        column: x => x.Owner,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -332,35 +307,84 @@ namespace DatacircleAPI.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Metric",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    ChartType = table.Column<int>(nullable: false),
+                    CompanyId = table.Column<int>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    DatasourceId = table.Column<int>(nullable: false),
+                    Description = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Owner = table.Column<int>(nullable: true),
+                    Query = table.Column<string>(nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Metric", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Metric_Company_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Company",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Metric_Datasource_DatasourceId",
+                        column: x => x.DatasourceId,
+                        principalTable: "Datasource",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Metric_AspNetUsers_Owner",
+                        column: x => x.Owner,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_Addresses_UserFk",
+                name: "IX_Addresses_UserId",
                 table: "Addresses",
-                column: "UserFk");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Datasource_CompanyFk",
+                name: "IX_Datasource_CompanyId",
                 table: "Datasource",
-                column: "CompanyFk");
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Datasource_ConnectionDetailsFk",
+                name: "IX_Datasource_ConnectionDetailsId",
                 table: "Datasource",
-                column: "ConnectionDetailsFk");
+                column: "ConnectionDetailsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Metric_CompanyFk",
+                name: "IX_Datasource_Owner",
+                table: "Datasource",
+                column: "Owner");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Metric_CompanyId",
                 table: "Metric",
-                column: "CompanyFk");
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Metric_DatasourceFk",
+                name: "IX_Metric_DatasourceId",
                 table: "Metric",
-                column: "DatasourceFk");
+                column: "DatasourceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoles_ComapnyFk",
+                name: "IX_Metric_Owner",
+                table: "Metric",
+                column: "Owner");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoles_CompanyId",
                 table: "AspNetRoles",
-                column: "ComapnyFk");
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
@@ -368,9 +392,9 @@ namespace DatacircleAPI.Migrations
                 column: "NormalizedName");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_CompanyFk",
+                name: "IX_AspNetUsers_CompanyId",
                 table: "AspNetUsers",
-                column: "CompanyFk");
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
@@ -384,9 +408,9 @@ namespace DatacircleAPI.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_RoleFk",
+                name: "IX_AspNetUsers_RoleId",
                 table: "AspNetUsers",
-                column: "RoleFk");
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -444,10 +468,10 @@ namespace DatacircleAPI.Migrations
                 name: "Datasource");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "ConnectionDetails");
 
             migrationBuilder.DropTable(
-                name: "ConnectionDetails");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

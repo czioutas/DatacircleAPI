@@ -19,15 +19,16 @@ namespace DatacircleAPI.Services
         public void Create(Datasource datasource, ConnectionDetails connectionDetails)
         {
             ConnectionDetails _connectionDetails = this._connectionRepository.Create(connectionDetails);
-            datasource.ConnectionDetailsFk = connectionDetails.ID;
+
+            datasource.ConnectionDetails = _connectionDetails;
 
             this._datasourceRepository.Create(datasource);
             this._datasourceRepository.Save();
         }
 
-        public Datasource Get(int id)
+        public Datasource Get(Datasource datasource)
         {
-            return this._datasourceRepository.Get(id);
+            return this._datasourceRepository.Get(datasource);
         }
 
         public IEnumerable<Datasource> GetAll(int companyFk)
@@ -49,10 +50,11 @@ namespace DatacircleAPI.Services
 
         public void Delete(Datasource datasource)
         {
-            Datasource _datasource = this._datasourceRepository.Get(datasource.ID);
+            Datasource _datasource = this._datasourceRepository.Get(datasource.ID);           
+
             if (_datasource != null)
             {
-                this._connectionRepository.Delete(_datasource.ConnectionDetailsFk);
+                this._connectionRepository.Delete(_datasource.ConnectionDetails.ID);
                 this._datasourceRepository.Delete(datasource);
                 this._datasourceRepository.Save();
             }

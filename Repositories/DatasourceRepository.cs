@@ -27,25 +27,26 @@ namespace DatacircleAPI.Repositories
             return this._context.Datasource.Add(datasource).Entity;
         }
 
-        Datasource IDatasourceRepository.Get(int datasourceId)
+        Datasource IDatasourceRepository.Get(Datasource datasource)
         {
             return this._context.Datasource
                         .Include(ds => ds.ConnectionDetails)
-                        .FirstOrDefault(ds => ds.ID == datasourceId);
+                        .Where(ds => ds.CompanyId == datasource.CompanyId)
+                        .FirstOrDefault(ds => ds.ID == datasource.ID);
         }
 
         IEnumerable<Datasource> IDatasourceRepository.GetAll(int companyFk)
         {
             return this._context.Datasource
                         .Include(ds => ds.ConnectionDetails)
-                        .Where(ds => ds.CompanyFk == companyFk);
+                        .Where(ds => ds.Company.ID == companyFk);
         }
 
         Datasource IDatasourceRepository.Update(DatasourceViewModel datasourceVm)
         {
             Datasource _datasource = this._context.Datasource
                 .Include(ds => ds.ConnectionDetails)
-                .Where(ds => ds.CompanyFk == datasourceVm.datasource.CompanyFk)
+                .Where(ds => ds.CompanyId == datasourceVm.datasource.CompanyId)
                 .Where(ds => ds.ID == datasourceVm.datasource.ID)
                 .FirstOrDefault();
 
@@ -78,6 +79,7 @@ namespace DatacircleAPI.Repositories
         {
             var _datasource = this._context.Datasource
                 .Include(ds => ds.ConnectionDetails)
+                .Where(ds => ds.CompanyId == datasource.CompanyId)
                 .FirstOrDefault(ds => ds.ID == datasource.ID);
 
             if (_datasource != null)

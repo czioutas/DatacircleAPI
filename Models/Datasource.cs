@@ -21,12 +21,13 @@ namespace DatacircleAPI.Models
         [Column(TypeName = "varchar(100)")]                
         public string Description { get; set; }
         public Type Type { get; set; }
-        public int ConnectionDetailsFk { get; set; }
-        [ForeignKey("ConnectionDetailsFk")]
+        public int? ConnectionDetailsId { get; set; }
         public ConnectionDetails ConnectionDetails { get; set; }
-        public int CompanyFk { get; set; }
-        [ForeignKey("CompanyFk")]
-        public ConnectionDetails Company { get; set; }
+        public int? CompanyId { get; set; }
+        public Company Company { get; set; }
+        public int? Owner { get; set; }
+        [ForeignKey("Owner")]
+        public User User { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

@@ -39,14 +39,14 @@ namespace DatacircleAPI.Migrations
 
                     b.Property<DateTime>("UpdatedAt");
 
-                    b.Property<int>("UserFk");
+                    b.Property<int?>("UserId");
 
                     b.Property<string>("phone")
                         .HasColumnType("varchar(100)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("UserFk");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Addresses");
                 });
@@ -110,14 +110,16 @@ namespace DatacircleAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("Id");
 
-                    b.Property<int>("CompanyFk");
+                    b.Property<int?>("CompanyId");
 
-                    b.Property<int>("ConnectionDetailsFk");
+                    b.Property<int?>("ConnectionDetailsId");
 
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<string>("Description")
                         .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("Owner");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -129,9 +131,11 @@ namespace DatacircleAPI.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("CompanyFk");
+                    b.HasIndex("CompanyId");
 
-                    b.HasIndex("ConnectionDetailsFk");
+                    b.HasIndex("ConnectionDetailsId");
+
+                    b.HasIndex("Owner");
 
                     b.ToTable("Datasource");
                 });
@@ -144,17 +148,20 @@ namespace DatacircleAPI.Migrations
 
                     b.Property<int>("ChartType");
 
-                    b.Property<int>("CompanyFk");
+                    b.Property<int?>("CompanyId");
 
                     b.Property<DateTime>("CreatedAt");
 
-                    b.Property<int>("DatasourceFk");
+                    b.Property<int?>("DatasourceId")
+                        .IsRequired();
 
                     b.Property<string>("Description")
                         .IsRequired();
 
                     b.Property<string>("Name")
                         .IsRequired();
+
+                    b.Property<int?>("Owner");
 
                     b.Property<string>("Query")
                         .IsRequired();
@@ -163,9 +170,11 @@ namespace DatacircleAPI.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("CompanyFk");
+                    b.HasIndex("CompanyId");
 
-                    b.HasIndex("DatasourceFk");
+                    b.HasIndex("DatasourceId");
+
+                    b.HasIndex("Owner");
 
                     b.ToTable("Metric");
                 });
@@ -195,7 +204,7 @@ namespace DatacircleAPI.Migrations
 
                     b.Property<bool>("Admin");
 
-                    b.Property<int>("ComapnyFk");
+                    b.Property<int?>("CompanyId");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -228,7 +237,7 @@ namespace DatacircleAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ComapnyFk");
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("NormalizedName")
                         .HasName("RoleNameIndex");
@@ -243,7 +252,7 @@ namespace DatacircleAPI.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
-                    b.Property<int>("CompanyFk");
+                    b.Property<int?>("CompanyId");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -286,7 +295,7 @@ namespace DatacircleAPI.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
-                    b.Property<int>("RoleFk");
+                    b.Property<int?>("RoleId");
 
                     b.Property<string>("SecurityStamp");
 
@@ -305,7 +314,7 @@ namespace DatacircleAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyFk");
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -314,7 +323,7 @@ namespace DatacircleAPI.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex");
 
-                    b.HasIndex("RoleFk");
+                    b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -406,47 +415,55 @@ namespace DatacircleAPI.Migrations
                 {
                     b.HasOne("DatacircleAPI.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserFk");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("DatacircleAPI.Models.Datasource", b =>
                 {
-                    b.HasOne("DatacircleAPI.Models.ConnectionDetails", "Company")
+                    b.HasOne("DatacircleAPI.Models.Company", "Company")
                         .WithMany()
-                        .HasForeignKey("CompanyFk");
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("DatacircleAPI.Models.ConnectionDetails", "ConnectionDetails")
                         .WithMany()
-                        .HasForeignKey("ConnectionDetailsFk");
+                        .HasForeignKey("ConnectionDetailsId");
+
+                    b.HasOne("DatacircleAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("Owner");
                 });
 
             modelBuilder.Entity("DatacircleAPI.Models.Metric", b =>
                 {
-                    b.HasOne("DatacircleAPI.Models.ConnectionDetails", "Company")
+                    b.HasOne("DatacircleAPI.Models.Company", "Company")
                         .WithMany()
-                        .HasForeignKey("CompanyFk");
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("DatacircleAPI.Models.Datasource", "Datasource")
                         .WithMany()
-                        .HasForeignKey("DatasourceFk");
+                        .HasForeignKey("DatasourceId");
+
+                    b.HasOne("DatacircleAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("Owner");
                 });
 
             modelBuilder.Entity("DatacircleAPI.Models.Role", b =>
                 {
                     b.HasOne("DatacircleAPI.Models.Company", "Company")
                         .WithMany()
-                        .HasForeignKey("ComapnyFk");
+                        .HasForeignKey("CompanyId");
                 });
 
             modelBuilder.Entity("DatacircleAPI.Models.User", b =>
                 {
                     b.HasOne("DatacircleAPI.Models.Company", "Company")
                         .WithMany()
-                        .HasForeignKey("CompanyFk");
+                        .HasForeignKey("CompanyId");
 
                     b.HasOne("DatacircleAPI.Models.Role", "Role")
                         .WithMany()
-                        .HasForeignKey("RoleFk");
+                        .HasForeignKey("RoleId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRoleClaim<int>", b =>

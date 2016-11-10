@@ -9,7 +9,7 @@ namespace DatacircleAPI.Repositories
     public interface IMetricRepository
     {
         Metric Create(Metric metric);
-        Metric Get(int metricId);
+        Metric Get(Metric metric);
         IEnumerable<Metric> GetAll(int companyFk);
         IList<Metric> GetAllByDatasource(Datasource datasource);
         Metric Update(Metric metric);

@@ -75,10 +75,19 @@ namespace DatacircleAPI
             {
                 ClaimsIdentity identity = (ClaimsIdentity)principal.Identity;
 
-                Claim displayNameClaim = new Claim("CompanyFk", user.CompanyFk.ToString());
-                if (!identity.HasClaim(displayNameClaim.Type, displayNameClaim.Value))
+                Console.WriteLine(user.CompanyId);
+
+                Claim companyFkClaim = new Claim("CompanyFk", user.CompanyId.ToString());
+                Claim userIdClaim = new Claim("UserId", user.Id.ToString());
+
+                if (!identity.HasClaim(companyFkClaim.Type, companyFkClaim.Value))
                 {
-                    identity.AddClaim(displayNameClaim);
+                    identity.AddClaim(companyFkClaim);
+                }
+
+                if (!identity.HasClaim(userIdClaim.Type, userIdClaim.Value))
+                {
+                    identity.AddClaim(userIdClaim);
                 }
 
                 Claim emailClaim = new Claim(ClaimTypes.Email, user.Email);

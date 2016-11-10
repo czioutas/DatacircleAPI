@@ -25,10 +25,8 @@ namespace DatacircleAPI.Models
         public string City { get; set; }
         [Column(TypeName = "varchar(100)")]                
         public string phone { get; set; }
-        public int UserFk { get; set; }
-        [ForeignKey("UserFk")]
+        public int? UserId { get; set; }
         public User User { get; set; }
-        
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

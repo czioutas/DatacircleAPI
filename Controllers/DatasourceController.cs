@@ -32,11 +32,14 @@ namespace DatacircleAPI.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            Datasource datasource = this._datasourceService.Get(id);
+            int CompanyFk = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
+
+            Datasource datasourceContainer = new Datasource { ID = id, CompanyId = CompanyFk };
+            Datasource datasource = this._datasourceService.Get(datasourceContainer);
 
             if (
                 datasource == null ||
-                datasource.CompanyFk != int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value)
+                datasource.CompanyId != int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value)
             )
             {
                 return this.NotFound();
@@ -66,7 +69,8 @@ namespace DatacircleAPI.Controllers
         [HttpPost]
         public IActionResult Create(DatasourceViewModel datasourceVm)
         {
-            datasourceVm.datasource.CompanyFk = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
+            datasourceVm.datasource.CompanyId = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
+            datasourceVm.datasource.Owner = int.Parse(HttpContext.User.FindFirst("UserId")?.Value);
 
             this._datasourceService.Create(datasourceVm.datasource, datasourceVm.connectionDetails);
 
@@ -82,7 +86,7 @@ namespace DatacircleAPI.Controllers
                 return this.NotFound();
             }
 
-            datasourceVm.datasource.CompanyFk = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
+            datasourceVm.datasource.CompanyId = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
             Datasource updatedDatasource = this._datasourceService.Update(datasourceVm);
 
             if (updatedDatasource == null)
@@ -97,11 +101,9 @@ namespace DatacircleAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Datasource datasource)
         {
-            datasource.CompanyFk = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
+            datasource.CompanyId = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
 
             IList<Metric> _metricCollection = this._metricService.GetAllByDatasource(datasource);
-
-            Console.WriteLine(_metricCollection.Count);
 
             if (_metricCollection.Count > 0)
             {

@@ -14,11 +14,9 @@ namespace DatacircleAPI.Models
         public string MiddleName { get; set; }
         [Column(TypeName = "varchar(100)")]                
         public string LastName { get; set; }
-        public int CompanyFk { get; set; }
-        [ForeignKey("CompanyFk")]
+        public int? CompanyId { get; set; }
         public Company Company { get; set; }
-        public int RoleFk { get; set; }
-        [ForeignKey("RoleFk")]
+        public int? RoleId { get; set; }
         public Role Role { get; set; }
         public bool IsCompanyOwner { get; set; }
         public bool IsActive { get; set; }

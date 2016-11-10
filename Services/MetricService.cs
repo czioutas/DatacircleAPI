@@ -21,13 +21,13 @@ namespace DatacircleAPI.Services
         public  async Task Create(Metric metric)
         {           
             this._metricRepository.Create(metric);
-            this._datasourceRepository.Save();  
+            this._metricRepository.Save();  
             return;          
         }
 
-        public Metric Get(int id)
+        public Metric Get(Metric metric)
         {
-            return this._metricRepository.Get(id);
+            return this._metricRepository.Get(metric);
         }
 
         public IEnumerable<Metric> GetAll(int companyFk)

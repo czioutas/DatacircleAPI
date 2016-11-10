@@ -14,10 +14,12 @@ namespace DatacircleAPI.Controllers
     public class MetricController : Controller
     {
         private readonly MetricService _metricService;
+        private readonly DatasourceService _datasourceService;
 
-        public MetricController(MetricService metricService)
+        public MetricController(MetricService metricService, DatasourceService datasourceService)
         {
             this._metricService = metricService;
+            this._datasourceService = datasourceService;
         }
 
         //
@@ -25,7 +27,10 @@ namespace DatacircleAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            Metric metric = this._metricService.Get(id);
+            int CompanyFk = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
+
+            Metric metricContainer = new Metric { ID = id, CompanyId = CompanyFk };
+            Metric metric = this._metricService.Get(metricContainer);
 
             if (metric == null)
             {
@@ -42,14 +47,14 @@ namespace DatacircleAPI.Controllers
         {
             int CompanyFk = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
 
-            IEnumerable<Metric> datasourceCollection = this._metricService.GetAll(CompanyFk);
+            IEnumerable<Metric> metricCollection = this._metricService.GetAll(CompanyFk);
 
-            if (datasourceCollection == null)
+            if (metricCollection == null)
             {
                 return this.Ok();
             }
 
-            return this.Ok(datasourceCollection);
+            return this.Ok(metricCollection);
         }
 
         //
@@ -57,14 +62,28 @@ namespace DatacircleAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Metric metric)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                metric.CompanyFk = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
-                await this._metricService.Create(metric);
-                return this.Ok();
+                return this.BadRequest(ModelState);                
             }
 
-            return this.BadRequest(metric);
+            int DatasourceId = metric.DatasourceId.GetValueOrDefault();
+            
+            if (DatasourceId == 0) {
+                return this.BadRequest("Invalid Datasource Id.");
+            }
+
+            Datasource _datasource = this._datasourceService.Get(DatasourceId);
+
+            if (_datasource == null) {
+                return this.BadRequest("No such Datasource found.");
+            }
+            
+            metric.CompanyId = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
+            metric.Owner = int.Parse(HttpContext.User.FindFirst("UserId")?.Value);
+
+            await this._metricService.Create(metric);
+            return this.Ok();        
         }
 
         //
@@ -87,6 +106,18 @@ namespace DatacircleAPI.Controllers
                 return this.BadRequest();
             }
 
+            int DatasourceId = metric.DatasourceId.GetValueOrDefault();
+            
+            if (DatasourceId == 0) {
+                return this.BadRequest("Invalid Datasource Id.");
+            }
+
+            Datasource _datasource = this._datasourceService.Get(DatasourceId);
+
+            if (_datasource == null) {
+                return this.BadRequest("No such Datasource found.");
+            }
+
             Metric newMetric = this._metricService.Update(metric);
 
             return this.Ok(newMetric);
@@ -97,7 +128,7 @@ namespace DatacircleAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Metric metric)
         {
-            metric.CompanyFk = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
+            metric.CompanyId = int.Parse(HttpContext.User.FindFirst("CompanyFk")?.Value);
 
             if (this._metricService.Delete(metric))
             {

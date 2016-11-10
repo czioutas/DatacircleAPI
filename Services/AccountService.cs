@@ -43,16 +43,18 @@ namespace DatacircleAPI.Services
             } 
             
             Company newCompanyEntity = _companyRepository.Create(new Company { Name = registerVm.Company });
+            _companyRepository.Save();
 
             Role newRole = _roleRepository.getDefaultNewRole();
-            newRole.ComapnyFk = newCompanyEntity.ID;
+
+            newRole.Company = newCompanyEntity;
 
             Role newRoleEntity = _roleRepository.Create(newRole);
             
             User newUser = getDefaultNewUser(
                 registerVm,
-                newCompanyEntity.ID,
-                newRoleEntity.Id
+                newCompanyEntity,
+                newRoleEntity
             );            
 
             IdentityResult result = await _userManager.CreateAsync(newUser, registerVm.Password);
@@ -80,25 +82,28 @@ namespace DatacircleAPI.Services
             return Convert.ToBoolean(result); 
         }
 
-        private User getDefaultNewUser(RegisterViewModel vm, int CompanyFk, int RoleFk)
+        private User getDefaultNewUser(RegisterViewModel vm, Company company, Role role)
         {
             DateTime now = DateTime.Now;
 
-            return new User {
+            User newUser = new User {
                 Email = vm.Email,
                 UserName = vm.Email,
                 FirstName = vm.FirstName,
-                LastName = vm.LastName,
-                CompanyFk = CompanyFk,
+                LastName = vm.LastName,                
                 IsCompanyOwner = true,
                 IsActive = false,
                 VerificationKey = "VerificationKey",
                 Token = "token",
                 IsVerified = false,
-                RoleFk = RoleFk,
                 CreatedAt = now,
                 UpdatedAt = now
             };
+
+            newUser.Company = company;
+            newUser.Role = role;
+
+            return newUser;
         }
     }
 }

@@ -25,19 +25,22 @@ namespace DatacircleAPI.Repositories
             return this._context.Metric.Add(metric).Entity;            
         }
 
-        Metric IMetricRepository.Get(int metricId)
+        Metric IMetricRepository.Get(Metric metric)
         {
-            return this._context.Metric.Where(m => m.ID == metricId).FirstOrDefault();
+            return this._context.Metric
+                .Where(m => m.ID == metric.ID)
+                .Where(m => m.CompanyId == metric.CompanyId)
+                .FirstOrDefault();
         }
 
         IEnumerable<Metric> IMetricRepository.GetAll(int companyFk)
         {
-            return this._context.Metric.Where(m => m.CompanyFk == companyFk);
+            return this._context.Metric.Where(m => m.Company.ID == companyFk);
         }
 
         IList<Metric> IMetricRepository.GetAllByDatasource(Datasource datasource)
         {
-            return this._context.Metric.Where(m => m.DatasourceFk == datasource.ID).ToList();
+            return this._context.Metric.Where(m => m.Datasource.ID == datasource.ID).ToList();
         }
 
         Metric IMetricRepository.Update(Metric metric)
@@ -58,7 +61,7 @@ namespace DatacircleAPI.Repositories
                 _metric.ChartType = metric.ChartType;
             }
 
-            _metric.DatasourceFk = metric.DatasourceFk > 0 ? metric.DatasourceFk : _metric.DatasourceFk;
+            _metric.DatasourceId = metric.DatasourceId > 0 ? metric.DatasourceId : _metric.DatasourceId;
             
             _metric.UpdatedAt = DateTime.Now;
              
@@ -70,7 +73,7 @@ namespace DatacircleAPI.Repositories
             // var test = this._context.Metric.FromSql("SELECT * FROM Metric where ID = {0} and CompanyFk = {1}", metric.ID, metric.CompanyFk).ToList();            
             Metric _metric = this._context.Metric
                     .Where(m => m.ID == metric.ID)
-                    .Where(m => m.CompanyFk == metric.CompanyFk).FirstOrDefault();
+                    .Where(m => m.CompanyId == metric.CompanyId).FirstOrDefault();
 
             if (_metric != null) {
                 this._context.Remove(_metric);            

@@ -12,7 +12,6 @@ namespace DatacircleAPI.Models
         public string Name { get; set; }
         [Column(TypeName = "varchar(100)")]                
         public string Description { get; set; }
-
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
