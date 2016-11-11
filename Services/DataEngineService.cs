@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
+using DatacircleAPI.Application;
 using DatacircleAPI.Models;
 using MySql.Data.MySqlClient;
 
@@ -17,10 +18,18 @@ namespace DatacircleAPI.Services
         {
             this._metric = metric;
             this._datasource = datasource;
-            return await this.Test();
+            
+            
+            switch (this._datasource.Type)
+            {
+                case DatacircleAPI.Models.Type.Mysql:
+                    return await this.getMySQLData();
+                default:
+                    throw new ResponseException("Datasource type not recognized.");
+            }
         }
 
-        protected async Task<ArrayList> Test()
+        protected async Task<ArrayList> getMySQLData()
         {
             string host = this._datasource.ConnectionDetails.Host;
             string port = this._datasource.ConnectionDetails.Port.ToString();
@@ -37,7 +46,7 @@ namespace DatacircleAPI.Services
             ConnectionString += "database=" + database + ";";
 
             Console.WriteLine(ConnectionString);
-            MySqlConnection connection = new MySqlConnection(ConnectionString);            
+            MySqlConnection connection = new MySqlConnection(ConnectionString);           
 
             await connection.OpenAsync();
             var cmd = connection.CreateCommand();
