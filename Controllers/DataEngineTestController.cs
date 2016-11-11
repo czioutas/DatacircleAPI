@@ -45,7 +45,7 @@ namespace DatacircleAPI.Controllers
             Datasource datasourceContainer = new Datasource { ID = DatasourceId, CompanyId = CompanyFk };
             Datasource datasource = this._datasourceService.Get(datasourceContainer);
 
-            ArrayList data = await this._dataEngineService.getData(metric, datasource);
+            ArrayList data = await this._dataEngineService.GetData(metric, datasource);
 
             return Ok(data);
         }

@@ -13,14 +13,14 @@ namespace DatacircleAPI.Services
         private Metric _metric;
         private Datasource _datasource;
 
-        public async Task<ArrayList> getData(Metric metric, Datasource datasource)
+        public async Task<ArrayList> GetData(Metric metric, Datasource datasource)
         {
             this._metric = metric;
             this._datasource = datasource;
-            return await this.test();
+            return await this.Test();
         }
 
-        protected async Task<ArrayList> test()
+        protected async Task<ArrayList> Test()
         {
             string host = this._datasource.ConnectionDetails.Host;
             string port = this._datasource.ConnectionDetails.Port.ToString();
